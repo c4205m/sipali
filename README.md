@@ -2,7 +2,7 @@
 
 A personal finance tracker that runs entirely in the browser — no account, no backend, no sync.
 
-{# **[Live app](https://c4205m.github.io/sipali/)** #}
+**[Live app](https://c4205m.github.io/sipali/)**
 
 ## Features
 
