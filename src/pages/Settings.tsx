@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Plus, Pencil, Trash2, X, Check, RefreshCw, Download, Upload, Zap, HelpCircle, ArrowLeftRight } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Check, RefreshCw, Download, Upload, Zap, HelpCircle, ArrowLeftRight, ExternalLink } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { db } from '../db/db';
 import { useCategories } from '../hooks/useCategories';
@@ -548,6 +548,16 @@ export default function Settings() {
           {categories.length} categories
         </p>
       </div>
+
+      <a
+        href="https://github.com/c4205m/sipali"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-3 bg-[#1a1a35] rounded-2xl p-4 text-slate-300 active:bg-[#2e2e4e] transition-colors"
+      >
+        <ExternalLink size={16} className="shrink-0" />
+        <span className="text-sm">View on GitHub</span>
+      </a>
     </div>
 
     {moveEntriesAcc && (
