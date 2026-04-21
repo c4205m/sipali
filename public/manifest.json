@@ -2,7 +2,7 @@
   "name": "Sipali",
   "short_name": "Sipali",
   "description": "Personal finance tracker",
-  "start_url": "/",
+  "start_url": "/sipali/",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#0f0f1a",
