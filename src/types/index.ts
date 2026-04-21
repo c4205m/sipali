@@ -30,6 +30,7 @@ export interface Transaction {
   installmentInterval?: RecurringInterval;
   account: Account;
   toAccount?: Account;
+  transferCounterpart?: string;
   isArchived?: boolean;
   createdAt: string;
 }
@@ -42,11 +43,28 @@ export interface Category {
   categoryType?: 'expense' | 'income';
 }
 
+export type HistoryField = 'amount' | 'currency' | 'account' | 'category' | 'importance' | 'recurring' | 'installment';
+
+export const ALL_HISTORY_FIELDS: { value: HistoryField; label: string }[] = [
+  { value: 'amount',      label: 'Amount'      },
+  { value: 'currency',    label: 'Currency'    },
+  { value: 'account',     label: 'Account'     },
+  { value: 'category',    label: 'Category'    },
+  { value: 'importance',  label: 'Importance'  },
+  { value: 'recurring',   label: 'Recurring'   },
+  { value: 'installment', label: 'Installment' },
+];
+
+export const DEFAULT_HISTORY_FIELDS: HistoryField[] = [
+  'amount', 'currency', 'account', 'category', 'importance', 'recurring', 'installment',
+];
+
 export interface AppSettings {
   id: 'app';
   displayCurrency: string;
   enabledCurrencies: string[];
   iosShortcutName?: string;
+  historyFields?: HistoryField[];
 }
 
 export interface ExchangeRates {
@@ -109,3 +127,29 @@ export const RECURRING_INTERVALS: { value: RecurringInterval; label: string }[] 
   { value: 'monthly', label: 'Monthly' },
   { value: 'yearly', label: 'Yearly' },
 ];
+
+export type HomeInterval = 'today' | 'week' | 'month' | 'year' | 'custom';
+
+export interface HomeFilters {
+  interval: HomeInterval;
+  customFrom: string;
+  customTo: string;
+}
+
+export interface TxFilters {
+  open: boolean;
+  nameQ: string;
+  dateFrom: string;
+  dateTo: string;
+  types: TransactionType[];
+  accounts: Account[];
+  categoryId: string;
+  importances: Importance[];
+  currencies: string[];
+  priceMin: string;
+  priceMax: string;
+  filterRecurring: boolean;
+  filterInstallment: boolean;
+  recurringIntervals: RecurringInterval[];
+  installmentIntervals: RecurringInterval[];
+}

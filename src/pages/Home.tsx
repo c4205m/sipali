@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from 'date-fns';
 import SummaryCards from '../components/SummaryCards';
@@ -7,11 +6,9 @@ import RecurringReminders from '../components/RecurringReminders';
 import { useTransactions } from '../hooks/useTransactions';
 import { useCategoryMap } from '../hooks/useCategories';
 import { useAccountMap } from '../hooks/useAccounts';
-import type { Transaction } from '../types';
+import type { Transaction, HomeFilters } from '../types';
 
-type Interval = 'today' | 'week' | 'month' | 'year' | 'custom';
-
-const INTERVALS: { value: Interval; label: string }[] = [
+const INTERVALS: { value: HomeFilters['interval']; label: string }[] = [
   { value: 'today',  label: 'Today'  },
   { value: 'week',   label: 'Week'   },
   { value: 'month',  label: 'Month'  },
@@ -20,17 +17,20 @@ const INTERVALS: { value: Interval; label: string }[] = [
 
 interface Props {
   onAddTransaction: (prefill?: Transaction) => void;
+  filters: HomeFilters;
+  onFiltersChange: (f: HomeFilters) => void;
 }
 
-export default function Home({ onAddTransaction }: Props) {
+export default function Home({ onAddTransaction, filters, onFiltersChange }: Props) {
   const transactions = useTransactions();
   const accountMap   = useAccountMap();
   const categoryMap  = useCategoryMap();
   const now = new Date();
 
-  const [interval,    setInterval]    = useState<Interval>('month');
-  const [customFrom,  setCustomFrom]  = useState(format(startOfMonth(now), 'yyyy-MM-dd'));
-  const [customTo,    setCustomTo]    = useState(format(now, 'yyyy-MM-dd'));
+  const { interval, customFrom, customTo } = filters;
+  const setInterval   = (v: HomeFilters['interval']) => onFiltersChange({ ...filters, interval: v });
+  const setCustomFrom = (v: string) => onFiltersChange({ ...filters, customFrom: v });
+  const setCustomTo   = (v: string) => onFiltersChange({ ...filters, customTo: v });
 
   function getRange(): [string, string] {
     switch (interval) {
@@ -52,10 +52,12 @@ export default function Home({ onAddTransaction }: Props) {
   }
 
   const [rangeFrom, rangeTo] = getRange();
-  const filtered = transactions.filter(
-    (t) => t.date >= rangeFrom && t.date <= rangeTo && !t.isInstallment && !t.isSkip
-      && !t.isArchived && (t.type === 'transfer' || accountMap[t.account] !== undefined)
-  );
+  const filtered = transactions
+    .filter(
+      (t) => t.date >= rangeFrom && t.date <= rangeTo && !t.isInstallment && !t.isSkip
+        && !t.isArchived && t.type !== 'transfer' && accountMap[t.account] !== undefined
+    )
+    .sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt));
 
   const dateInputClass =
     'flex-1 bg-[#12122a] border border-[#2e2e4e] rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-[#e94560] transition-colors';

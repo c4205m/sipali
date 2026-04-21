@@ -111,6 +111,21 @@ export default function Stats() {
     });
   }, [transactions, displayCurrency, rates]);
 
+  const topExpensesByName = useMemo(() => {
+    const m = now.getMonth(), y = now.getFullYear();
+    const totals: Record<string, number> = {};
+    for (const t of transactions) {
+      if (t.type !== 'expense') continue;
+      const d = new Date(t.date);
+      if (d.getMonth() !== m || d.getFullYear() !== y) continue;
+      totals[t.name] = (totals[t.name] ?? 0) + cv(t.price, t.currency ?? displayCurrency);
+    }
+    return Object.entries(totals)
+      .map(([name, total]) => ({ name, total }))
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 50);
+  }, [transactions, displayCurrency, rates]);
+
   const importanceData = useMemo(() =>
     Array.from({ length: 3 }, (_, i) => {
       const d = subMonths(now, 2 - i);
@@ -208,6 +223,31 @@ export default function Stats() {
             </ResponsiveContainer>
             <Legend data={incomeCategoryData} />
           </>
+        )}
+      </Section>
+
+      {/* Top 50 expenses by description */}
+      <Section title="Top Expenses by Description" subtitle="This month · ranked by total spent">
+        {topExpensesByName.length === 0 ? <Empty /> : (
+          <div className="space-y-2 max-h-[420px] overflow-y-auto scrollbar-hide pr-1">
+            {topExpensesByName.map((item, i) => (
+              <div key={item.name} className="flex items-center gap-3">
+                <span className="text-[10px] text-slate-600 w-5 text-right shrink-0 font-mono">{i + 1}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-0.5 gap-2">
+                    <span className="text-xs text-slate-300 truncate">{item.name}</span>
+                    <span className="text-xs font-semibold text-red-400 shrink-0">{fmt(item.total)}</span>
+                  </div>
+                  <div className="h-1 rounded-full bg-[#1e1e35] overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-[#e94560]"
+                      style={{ width: `${(item.total / topExpensesByName[0].total) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </Section>
 

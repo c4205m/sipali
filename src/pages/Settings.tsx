@@ -10,8 +10,8 @@ import { fetchAndCacheRates } from '../utils/rates';
 import { getCurrencySymbol } from '../utils/currency';
 import { convertCurrency, formatCurrency } from '../utils/currency';
 import { isApplePlatform } from '../utils/platform';
-import { ALL_CURRENCIES } from '../types';
-import type { Category, AccountRecord } from '../types';
+import { ALL_CURRENCIES, ALL_HISTORY_FIELDS, DEFAULT_HISTORY_FIELDS } from '../types';
+import type { Category, AccountRecord, HistoryField } from '../types';
 import { useAccounts } from '../hooks/useAccounts';
 import MoveEntriesModal from '../components/MoveEntriesModal';
 import DeleteAccountModal from '../components/DeleteAccountModal';
@@ -169,11 +169,9 @@ export default function Settings() {
       if (t.isInstallment && !t.installmentIndex) continue;
       const amount = convertCurrency(t.price, t.currency ?? dc, dc, rates, base);
       if (t.account === accountId) {
-        if (t.type === 'income')   b += amount;
-        if (t.type === 'expense')  b -= amount;
-        if (t.type === 'transfer') b -= amount;
+        if (t.type === 'income')  b += amount;
+        if (t.type === 'expense') b -= amount;
       }
-      if (t.toAccount === accountId && t.type === 'transfer') b += amount;
     }
     return b;
   }
@@ -482,6 +480,38 @@ export default function Settings() {
           )}
         </div>
       )}
+
+      {/* ── History autofill ─────────────────────────────────────── */}
+      <div className="bg-[#1a1a35] rounded-2xl p-4 space-y-3">
+        <div>
+          <h2 className="text-sm font-semibold text-white">History Autofill</h2>
+          <p className="text-xs text-slate-500 mt-0.5">Fields restored when selecting from description history</p>
+        </div>
+        <div className="space-y-1">
+          {ALL_HISTORY_FIELDS.map(({ value, label }) => {
+            const enabled = (settings.historyFields ?? DEFAULT_HISTORY_FIELDS).includes(value);
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={async () => {
+                  const current = settings.historyFields ?? DEFAULT_HISTORY_FIELDS;
+                  const next = enabled
+                    ? current.filter((f) => f !== value)
+                    : [...current, value as HistoryField];
+                  await db.settings.update('app', { historyFields: next });
+                }}
+                className="w-full flex items-center justify-between py-2.5 px-1"
+              >
+                <span className="text-sm text-slate-300">{label}</span>
+                <span className={`w-9 h-5 rounded-full transition-colors relative ${enabled ? 'bg-[#e94560]' : 'bg-[#2e2e4e]'}`}>
+                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${enabled ? 'left-4' : 'left-0.5'}`} />
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {/* ── Import / Export ──────────────────────────────────────── */}
       <div className="bg-[#1a1a35] rounded-2xl p-4 space-y-3">

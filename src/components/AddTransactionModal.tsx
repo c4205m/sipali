@@ -7,7 +7,7 @@ import { useSettings } from '../hooks/useSettings';
 import { getCurrencySymbol } from '../utils/currency';
 import Select from './Select';
 import type { Transaction, TransactionType, Importance, RecurringInterval, Account } from '../types';
-import { IMPORTANCE_OPTIONS, RECURRING_INTERVALS } from '../types';
+import { IMPORTANCE_OPTIONS, RECURRING_INTERVALS, DEFAULT_HISTORY_FIELDS } from '../types';
 import { useAccounts } from '../hooks/useAccounts';
 
 interface Props {
@@ -82,14 +82,13 @@ export default function AddTransactionModal({ onClose, prefill }: Props) {
 
   const suggestions = useMemo(() => {
     if (name.trim().length === 0) return [];
-    const seen = new Map<string, { name: string; categoryId: string; importance: Importance | undefined; date: string }>();
+    const seen = new Map<string, Transaction & { date: string }>();
     for (const t of allTransactions) {
       if (t.type !== type) continue;
       if (!t.name.toLowerCase().includes(name.toLowerCase())) continue;
       if (t.name.toLowerCase() === name.toLowerCase()) continue;
       const prev = seen.get(t.name);
-      if (!prev || t.date > prev.date)
-        seen.set(t.name, { name: t.name, categoryId: t.categoryId, importance: t.importance, date: t.date });
+      if (!prev || t.date > prev.date) seen.set(t.name, t);
     }
     return Array.from(seen.values()).slice(0, 5);
   }, [name, type, allTransactions]);
@@ -110,42 +109,75 @@ export default function AddTransactionModal({ onClose, prefill }: Props) {
       return setError('Installment count must be at least 2');
 
     const count = Number(installmentCount);
-    await db.transactions.add({
-      id: crypto.randomUUID(),
-      name: name.trim(),
-      price: Number(price),
-      currency,
-      date,
-      type,
-      categoryId:          type !== 'transfer' ? categoryId : 'transfer',
-      importance:          type === 'expense'  ? importance : undefined,
-      isRecurring,
-      recurringInterval:   isRecurring   ? recurringInterval : undefined,
-      isInstallment:       isInstallment || undefined,
-      installmentCount:    isInstallment ? count : undefined,
-      installmentsPaid:    isInstallment ? 1     : undefined,
-      installmentInterval: isInstallment ? installmentInterval : undefined,
-      account,
-      toAccount:           type === 'transfer' ? toAccount : undefined,
-      createdAt: new Date().toISOString(),
-    });
 
-    if (isInstallment) {
+    if (type === 'transfer') {
+      const fromName = accountList.find((a) => a.id === account)?.name ?? account;
+      const toName   = accountList.find((a) => a.id === toAccount)?.name ?? toAccount;
       await db.transactions.add({
         id: crypto.randomUUID(),
         name: name.trim(),
-        price: Number(price) / count,
+        price: Number(price),
         currency,
         date,
         type: 'expense',
-        categoryId,
-        importance,
+        categoryId: 'transfer',
+        importance: undefined,
         isRecurring: false,
-        installmentIndex: 1,
-        installmentTotal: count,
+        account,
+        transferCounterpart: toName,
+        createdAt: new Date().toISOString(),
+      });
+      await db.transactions.add({
+        id: crypto.randomUUID(),
+        name: name.trim(),
+        price: Number(price),
+        currency,
+        date,
+        type: 'income',
+        categoryId: 'transfer',
+        importance: undefined,
+        isRecurring: false,
+        account: toAccount,
+        transferCounterpart: fromName,
+        createdAt: new Date().toISOString(),
+      });
+    } else {
+      await db.transactions.add({
+        id: crypto.randomUUID(),
+        name: name.trim(),
+        price: Number(price),
+        currency,
+        date,
+        type,
+        categoryId,
+        importance: type === 'expense' ? importance : undefined,
+        isRecurring,
+        recurringInterval:   isRecurring   ? recurringInterval : undefined,
+        isInstallment:       isInstallment || undefined,
+        installmentCount:    isInstallment ? count : undefined,
+        installmentsPaid:    isInstallment ? 1     : undefined,
+        installmentInterval: isInstallment ? installmentInterval : undefined,
         account,
         createdAt: new Date().toISOString(),
       });
+
+      if (isInstallment) {
+        await db.transactions.add({
+          id: crypto.randomUUID(),
+          name: name.trim(),
+          price: Number(price) / count,
+          currency,
+          date,
+          type: 'expense',
+          categoryId,
+          importance,
+          isRecurring: false,
+          installmentIndex: 1,
+          installmentTotal: count,
+          account,
+          createdAt: new Date().toISOString(),
+        });
+      }
     }
 
     onClose();
@@ -211,9 +243,22 @@ export default function AddTransactionModal({ onClose, prefill }: Props) {
                     key={s.name}
                     type="button"
                     onPointerDown={() => {
+                      const hf = settings.historyFields ?? DEFAULT_HISTORY_FIELDS;
                       setName(s.name);
-                      if (s.categoryId) setCategoryId(s.categoryId);
-                      if (s.importance && type === 'expense') setImportance(s.importance);
+                      if (hf.includes('category') && s.categoryId) setCategoryId(s.categoryId);
+                      if (hf.includes('importance') && s.importance && type === 'expense') setImportance(s.importance);
+                      if (hf.includes('amount') && s.price) setPrice(s.price.toString());
+                      if (hf.includes('currency') && s.currency) { setCurrency(s.currency); setCurrencyLocked(true); }
+                      if (hf.includes('account') && s.account) setAccount(s.account);
+                      if (hf.includes('recurring')) {
+                        setIsRecurring(s.isRecurring ?? false);
+                        if (s.recurringInterval) setRecurringInterval(s.recurringInterval);
+                      }
+                      if (hf.includes('installment')) {
+                        setIsInstallment(s.isInstallment ?? false);
+                        if (s.installmentCount) setInstallmentCount(s.installmentCount.toString());
+                        if (s.installmentInterval) setInstallmentInterval(s.installmentInterval);
+                      }
                     }}
                     className="w-full text-left px-4 py-2.5 text-sm text-slate-300 active:bg-[#2e2e4e] transition-colors touch-manipulation border-b border-[#2e2e4e] last:border-b-0"
                   >

@@ -1,18 +1,15 @@
-import { useState } from 'react';
-import { format, startOfMonth } from 'date-fns';
+import { useMemo } from 'react';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { useTransactions } from '../hooks/useTransactions';
 import { useCategories, useCategoryMap } from '../hooks/useCategories';
 import { useSettings } from '../hooks/useSettings';
 import TransactionList from '../components/TransactionList';
+import SummaryCards from '../components/SummaryCards';
 import Select from '../components/Select';
-import type { TransactionType, Importance, RecurringInterval, Account } from '../types';
+import type { TransactionType, Importance, RecurringInterval, Account, TxFilters } from '../types';
 import { IMPORTANCE_OPTIONS, RECURRING_INTERVALS } from '../types';
 import { useAccounts } from '../hooks/useAccounts';
-
-const now = new Date();
-const DEFAULT_FROM = format(startOfMonth(now), 'yyyy-MM-dd');
-const DEFAULT_TO   = format(now, 'yyyy-MM-dd');
+import { defaultTxFilters } from '../utils/filters';
 
 const TYPE_OPTIONS: { value: TransactionType; label: string }[] = [
   { value: 'expense',  label: 'Expense'  },
@@ -52,42 +49,50 @@ function PillGroup<T extends string>({
   );
 }
 
-export default function Transactions() {
+interface Props {
+  filters: TxFilters;
+  onFiltersChange: (f: TxFilters) => void;
+}
+
+export default function Transactions({ filters, onFiltersChange }: Props) {
   const transactions   = useTransactions();
   const categories     = useCategories();
   const categoryMap    = useCategoryMap();
   const accountList    = useAccounts();
   const { enabledCurrencies } = useSettings();
 
-  // ── Filter state ──────────────────────────────────────────────────────────
-  const [open,               setOpen]               = useState(false);
-  const [nameQ,              setNameQ]              = useState('');
-  const [dateFrom,           setDateFrom]           = useState(DEFAULT_FROM);
-  const [dateTo,             setDateTo]             = useState(DEFAULT_TO);
-  const [types,              setTypes]              = useState<TransactionType[]>([]);
-  const [accounts,           setAccounts]           = useState<Account[]>([]);
-  const [categoryId,         setCategoryId]         = useState('');
-  const [importances,        setImportances]        = useState<Importance[]>([]);
-  const [currencies,         setCurrencies]         = useState<string[]>([]);
-  const [priceMin,           setPriceMin]           = useState('');
-  const [priceMax,           setPriceMax]           = useState('');
-  const [filterRecurring,    setFilterRecurring]    = useState(false);
-  const [filterInstallment,  setFilterInstallment]  = useState(false);
-  const [recurringIntervals,   setRecurringIntervals]   = useState<RecurringInterval[]>([]);
-  const [installmentIntervals, setInstallmentIntervals] = useState<RecurringInterval[]>([]);
+  const {
+    open, nameQ, dateFrom, dateTo, types, accounts, categoryId,
+    importances, currencies, priceMin, priceMax,
+    filterRecurring, filterInstallment, recurringIntervals, installmentIntervals,
+  } = filters;
 
-  function clearAll() {
-    setNameQ(''); setDateFrom(DEFAULT_FROM); setDateTo(DEFAULT_TO);
-    setTypes([]); setAccounts([]); setCategoryId(''); setImportances([]);
-    setCurrencies([]); setPriceMin(''); setPriceMax('');
-    setFilterRecurring(false); setFilterInstallment(false);
-    setRecurringIntervals([]); setInstallmentIntervals([]);
-  }
+  const set = <K extends keyof TxFilters>(key: K, val: TxFilters[K]) =>
+    onFiltersChange({ ...filters, [key]: val });
 
-  // ── Active filter count ───────────────────────────────────────────────────
+  const setOpen               = (v: boolean)             => set('open', v);
+  const setNameQ              = (v: string)              => set('nameQ', v);
+  const setDateFrom           = (v: string)              => set('dateFrom', v);
+  const setDateTo             = (v: string)              => set('dateTo', v);
+  const setTypes              = (v: TransactionType[])   => set('types', v);
+  const setAccounts           = (v: Account[])           => set('accounts', v);
+  const setCategoryId         = (v: string)              => set('categoryId', v);
+  const setImportances        = (v: Importance[])        => set('importances', v);
+  const setCurrencies         = (v: string[])            => set('currencies', v);
+  const setPriceMin           = (v: string)              => set('priceMin', v);
+  const setPriceMax           = (v: string)              => set('priceMax', v);
+  const setFilterRecurring    = (v: boolean)             => set('filterRecurring', v);
+  const setFilterInstallment  = (v: boolean)             => set('filterInstallment', v);
+  const setRecurringIntervals   = (v: RecurringInterval[]) => set('recurringIntervals', v);
+  const setInstallmentIntervals = (v: RecurringInterval[]) => set('installmentIntervals', v);
+
+  function clearAll() { onFiltersChange(defaultTxFilters()); }
+
+  const { dateFrom: defaultFrom, dateTo: defaultTo } = useMemo(defaultTxFilters, []);
+
   const activeCount = [
     nameQ !== '',
-    dateFrom !== DEFAULT_FROM || dateTo !== DEFAULT_TO,
+    dateFrom !== defaultFrom || dateTo !== defaultTo,
     types.length > 0,
     accounts.length > 0,
     categoryId !== '',
@@ -103,7 +108,13 @@ export default function Transactions() {
   const filtered = transactions.filter((t) => {
     if (nameQ && !t.name.toLowerCase().includes(nameQ.toLowerCase())) return false;
     if (t.date < dateFrom || t.date > dateTo) return false;
-    if (types.length     && !types.includes(t.type))         return false;
+    if (types.length) {
+      const match =
+        (types.includes('transfer') && !!t.transferCounterpart) ||
+        (types.includes('expense')  && t.type === 'expense' && !t.transferCounterpart) ||
+        (types.includes('income')   && t.type === 'income'  && !t.transferCounterpart);
+      if (!match) return false;
+    }
     if (accounts.length  && !accounts.includes(t.account))   return false;
     if (categoryId       && t.categoryId !== categoryId)      return false;
     if (importances.length && t.importance && !importances.includes(t.importance)) return false;
@@ -145,7 +156,7 @@ export default function Transactions() {
             </button>
           )}
           <button
-            onPointerDown={() => setOpen((o) => !o)}
+            onPointerDown={() => setOpen(!open)}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border transition-all touch-manipulation ${
               open || activeCount > 0
                 ? 'border-[#e94560] text-[#e94560] bg-[#e94560]/10'
@@ -249,7 +260,7 @@ export default function Transactions() {
           <div>
             <button
               type="button"
-              onPointerDown={() => { setFilterRecurring((r) => !r); setRecurringIntervals([]); }}
+              onPointerDown={() => { setFilterRecurring(!filterRecurring); setRecurringIntervals([]); }}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm border transition-all touch-manipulation ${
                 filterRecurring
                   ? 'border-[#e94560] text-[#e94560] bg-[#e94560]/10'
@@ -273,7 +284,7 @@ export default function Transactions() {
           <div>
             <button
               type="button"
-              onPointerDown={() => { setFilterInstallment((i) => !i); setInstallmentIntervals([]); }}
+              onPointerDown={() => { setFilterInstallment(!filterInstallment); setInstallmentIntervals([]); }}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm border transition-all touch-manipulation ${
                 filterInstallment
                   ? 'border-[#a78bfa] text-[#a78bfa] bg-[#a78bfa]/10'
@@ -296,8 +307,10 @@ export default function Transactions() {
         </div>
       )}
 
+      <SummaryCards transactions={filtered} />
+
       {/* Result count */}
-      <div className="px-4 pt-4 pb-1">
+      <div className="px-4 pt-3 pb-1">
         <p className="text-xs text-slate-500">{filtered.length} result{filtered.length !== 1 ? 's' : ''}</p>
       </div>
 
