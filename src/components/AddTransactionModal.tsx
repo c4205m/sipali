@@ -30,7 +30,8 @@ const TYPE_OPTIONS: { value: TransactionType; label: string; color: string }[] =
 export default function AddTransactionModal({ onClose, prefill }: Props) {
   const categories      = useCategories();
   const allTransactions = useTransactions();
-  const { displayCurrency, enabledCurrencies } = useSettings();
+  const settings = useSettings();
+  const { displayCurrency, enabledCurrencies } = settings;
   const accountList     = useAccounts();
   const today = new Date().toISOString().split('T')[0];
 
