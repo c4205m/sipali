@@ -1,0 +1,18 @@
+{
+  "name": "Sipali",
+  "short_name": "Sipali",
+  "description": "Personal finance tracker",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0f0f1a",
+  "background_color": "#0f0f1a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -92,6 +92,8 @@ export const ALL_CURRENCIES: { code: string; label: string }[] = [
   { code: 'IDR', label: 'Indonesian Rupiah' },
   { code: 'MYR', label: 'Malaysian Ringgit' },
   { code: 'THB', label: 'Thai Baht' },
+  { code: 'XAU', label: 'Ounce Gold' },
+  { code: 'GXAU', label: 'Gram Gold' },
 ];
 
 

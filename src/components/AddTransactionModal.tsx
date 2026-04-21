@@ -47,8 +47,8 @@ export default function AddTransactionModal({ onClose, prefill }: Props) {
   const [isInstallment,        setIsInstallment]        = useState(prefill?.isInstallment ?? false);
   const [installmentCount,     setInstallmentCount]     = useState(prefill?.installmentCount?.toString() ?? '12');
   const [installmentInterval,  setInstallmentInterval]  = useState<RecurringInterval>(prefill?.installmentInterval ?? 'monthly');
-  const [account,           setAccount]           = useState<Account>(prefill?.account ?? 'cash');
-  const [toAccount,         setToAccount]         = useState<Account>(prefill?.toAccount ?? 'bank1');
+  const [account,           setAccount]           = useState<Account>(prefill?.account ?? '');
+  const [toAccount,         setToAccount]         = useState<Account>(prefill?.toAccount ?? '');
   const [error,             setError]             = useState('');
 
   useEffect(() => {
@@ -56,11 +56,15 @@ export default function AddTransactionModal({ onClose, prefill }: Props) {
   }, [displayCurrency]);
 
   useEffect(() => {
-    if (accountList.length === 0) return;
-    const ids = accountList.map((a) => a.id);
-    if (!ids.includes(account))   setAccount(accountList[0].id);
-    if (!ids.includes(toAccount)) setToAccount(accountList[1]?.id ?? accountList[0].id);
-  }, [accountList, account, toAccount]);
+    const activeAccounts = accountList.filter((a) => !a.isArchived);
+    if (activeAccounts.length === 0) return;
+    const ids = activeAccounts.map((a) => a.id);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setAccount((cur) => (ids.includes(cur) ? cur : activeAccounts[0].id));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setToAccount((cur) => (ids.includes(cur) ? cur : (activeAccounts[1]?.id ?? activeAccounts[0].id)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountList]);
 
   const filteredCategories = categories.filter((c) => {
     if (type === 'income')   return (c.categoryType ?? 'expense') === 'income';
@@ -75,16 +79,6 @@ export default function AddTransactionModal({ onClose, prefill }: Props) {
   useEffect(() => {
     if (!categoryId && filteredCategories.length > 0) setCategoryId(filteredCategories[0].id);
   }, [filteredCategories]);
-
-  // TEMP: ip-prefixed id for device tracing during testing (crypto unavailable over plain HTTP)
-  async function testId() {
-    try {
-      const { ip } = await fetch('https://api.ipify.org?format=json').then((r) => r.json());
-      return `${ip}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    } catch {
-      return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    }
-  }
 
   const suggestions = useMemo(() => {
     if (name.trim().length === 0) return [];
@@ -117,7 +111,7 @@ export default function AddTransactionModal({ onClose, prefill }: Props) {
 
     const count = Number(installmentCount);
     await db.transactions.add({
-      id: await testId(),//crypto.randomUUID(),
+      id: crypto.randomUUID(),
       name: name.trim(),
       price: Number(price),
       currency,
@@ -138,7 +132,7 @@ export default function AddTransactionModal({ onClose, prefill }: Props) {
 
     if (isInstallment) {
       await db.transactions.add({
-        id: await testId(),
+        id: crypto.randomUUID(),
         name: name.trim(),
         price: Number(price) / count,
         currency,

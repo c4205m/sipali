@@ -39,13 +39,26 @@ class SipaliDB extends Dexie {
       exchangeRates:'id',
       accounts:     'id, name',
     });
+    this.version(5)
+      .stores({
+        transactions: 'id, date, type, categoryId, account, createdAt, isArchived',
+        categories:   'id, name',
+        settings:     'id',
+        exchangeRates:'id',
+        accounts:     'id, name',
+      })
+      .upgrade(async (tx) => {
+        const b1 = await tx.table('accounts').get('bank1');
+        if (b1) await tx.table('accounts').update('bank1', { name: 'Savings' });
+        const b2 = await tx.table('accounts').get('bank2');
+        if (b2) await tx.table('accounts').update('bank2', { name: 'Checking' });
+      });
   }
 }
 
 export const DEFAULT_ACCOUNTS: AccountRecord[] = [
-  { id: 'cash',  name: 'Cash',   isDefault: true  },
-  { id: 'bank1', name: 'Bank 1', isDefault: false },
-  { id: 'bank2', name: 'Bank 2', isDefault: false },
+  { id: 'cash',    name: 'Cash',    isDefault: true  },
+  { id: 'savings', name: 'Savings', isDefault: false },
 ];
 
 export const db = new SipaliDB();
