@@ -235,7 +235,6 @@ export default function AddTransactionModal({ onClose, prefill }: Props) {
               placeholder={type === 'income' ? 'e.g. Monthly salary, Freelance…' : 'e.g. Grocery run, Rent…'}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              autoFocus
             />
             {suggestions.length > 0 && (
               <div className="mt-1 rounded-xl overflow-hidden border border-[#2e2e4e] bg-[#1a1a35]">
