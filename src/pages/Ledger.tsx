@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react"
-import { SlidersHorizontal, Search } from "lucide-react"
+import { SlidersHorizontal, Search, Split } from "lucide-react"
 import { Card, Input, Button, Badge } from "@/components/ui"
 import { TxList } from "@/components/domain/TxList"
 import { AdvancedFilters } from "@/components/domain/AdvancedFilters"
 import { AddTransactionFab } from "@/components/domain/AddTransaction"
+import { SplitModal } from "@/components/domain/SplitModal"
 import { useTransactions } from "@/hooks/useTransactions"
 import { applyTxFilters, emptyTxFilters } from "@/lib/filter"
 import { activeFilterCount } from "@/lib/filter-count"
@@ -13,6 +14,7 @@ export default function Ledger() {
   const txs = useTransactions()
   const [filters, setFilters] = useState<TxFilters>(emptyTxFilters)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [splitOpen, setSplitOpen] = useState(false)
 
   const filtered = useMemo(
     () => applyTxFilters(txs ?? [], filters),
@@ -24,7 +26,12 @@ export default function Ledger() {
     <div className="space-y-4">
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Ledger</h1>
-        <span className="text-sm text-muted">{filtered.length} entries</span>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted">{filtered.length} entries</span>
+          <Button size="sm" variant="outline" onClick={() => setSplitOpen(true)}>
+            <Split size={14} /> Split
+          </Button>
+        </div>
       </header>
 
       <div className="flex gap-2">
@@ -60,6 +67,7 @@ export default function Ledger() {
         value={filters}
         onChange={setFilters}
       />
+      <SplitModal open={splitOpen} onOpenChange={setSplitOpen} />
       <AddTransactionFab />
     </div>
   )

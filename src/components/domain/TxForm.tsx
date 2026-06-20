@@ -18,6 +18,7 @@ import { addTransaction, updateTransaction } from "@/lib/transactions"
 import { addRecurringTemplate } from "@/hooks/useRecurring"
 import { addInstallmentPlan } from "@/hooks/useInstallments"
 import { currencyOptions } from "@/lib/currency-options"
+import { decodeOweCode } from "@/lib/split"
 import { todayISO } from "@/lib/dates"
 import {
   TYPE_OPTIONS,
@@ -63,6 +64,22 @@ export function TxForm({
   const [interval, setInterval] = useState<RecurringInterval>("monthly")
   const [installment, setInstallment] = useState(false)
   const [installmentTotal, setInstallmentTotal] = useState<number | "">(12)
+  const [code, setCode] = useState("")
+
+  function applyCode() {
+    if (!code.trim()) return
+    try {
+      const owe = decodeOweCode(code)
+      setType("expense")
+      setName(owe.payer ? `${owe.title} (split)` : owe.title)
+      setPrice(owe.amount)
+      setCurrency(owe.currency)
+      setCode("")
+      toast("Filled from split code", "success")
+    } catch {
+      toast("Invalid split code", "error")
+    }
+  }
 
   const accountOptions = useMemo(
     () => accounts.map((a) => ({ value: a.name, label: a.name })),
@@ -152,6 +169,20 @@ export function TxForm({
 
   return (
     <div className="space-y-4">
+      {!isEdit && (
+        <div className="flex gap-2 rounded-xl border border-border bg-surface p-2">
+          <Input
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="Paste split code…"
+            className="flex-1"
+          />
+          <Button variant="secondary" onClick={applyCode} disabled={!code.trim()}>
+            Fill
+          </Button>
+        </div>
+      )}
+
       <SegmentedControl
         className="w-full"
         value={type}

@@ -5,7 +5,7 @@ import Ledger from "@/pages/Ledger"
 import Stats from "@/pages/Stats"
 import Settings from "@/pages/Settings"
 import Design from "@/pages/Design"
-import ShareView from "@/pages/ShareView"
+import SplitView from "@/pages/SplitView"
 
 export function AppRoutes() {
   return (
@@ -16,8 +16,9 @@ export function AppRoutes() {
         <Route path="stats" element={<Stats />} />
         <Route path="settings" element={<Settings />} />
         <Route path="design" element={<Design />} />
-        <Route path="share" element={<ShareView />} />
       </Route>
+      {/* Standalone — no navbar, for shared split links. */}
+      <Route path="split" element={<SplitView />} />
     </Routes>
   )
 }
