@@ -23,7 +23,7 @@ export default function Ledger() {
   const count = activeFilterCount(filters)
 
   return (
-    <div className="space-y-4">
+    <div className="flex h-[calc(100dvh-7rem)] flex-col gap-4 md:h-[calc(100dvh-6.5rem)]">
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Ledger</h1>
         <div className="flex items-center gap-3">
@@ -53,12 +53,14 @@ export default function Ledger() {
         </Button>
       </div>
 
-      <Card className="p-2">
-        <TxList
-          txs={filtered}
-          emptyTitle="No matching transactions"
-          emptyDescription={count > 0 ? "Try adjusting your filters." : "Add your first transaction."}
-        />
+      <Card className="min-h-0 flex-1 overflow-hidden p-2">
+        <div className="no-scrollbar h-full overflow-y-auto">
+          <TxList
+            txs={filtered}
+            emptyTitle="No matching transactions"
+            emptyDescription={count > 0 ? "Try adjusting your filters." : "Add your first transaction."}
+          />
+        </div>
       </Card>
 
       <AdvancedFilters

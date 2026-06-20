@@ -83,7 +83,7 @@ export default function Home() {
         <Card className="min-h-0 flex-1 overflow-hidden p-2">
           <div className="no-scrollbar h-full overflow-y-auto" onScroll={onListScroll}>
             <TxList
-              txs={inRange.slice(0, 20)}
+              txs={inRange}
               emptyTitle="Nothing here yet"
               emptyDescription="Add a transaction to see it in this range."
             />
