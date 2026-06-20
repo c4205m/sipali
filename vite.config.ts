@@ -6,6 +6,7 @@ import basicSsl from "@vitejs/plugin-basic-ssl"
 import { fileURLToPath, URL } from "node:url"
 
 export default defineConfig({
+  base: "/sipali/",
   server: { host: true },
   preview: { host: true },
   plugins: [
@@ -14,7 +15,7 @@ export default defineConfig({
     basicSsl(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg", "apple-touch-icon.png"],
+      includeAssets: ["favicon.svg", "favicon.ico", "favicon-96x96.png", "apple-touch-icon.png"],
       manifest: {
         name: "sipali — finance tracker",
         short_name: "sipali",
@@ -23,13 +24,20 @@ export default defineConfig({
         background_color: "#05070f",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/",
-        scope: "/",
+        id: "/sipali/",
+        start_url: "/sipali/",
+        scope: "/sipali/",
         icons: [
-          { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
-          { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
+          { src: "web-app-manifest-192x192.png", sizes: "192x192", type: "image/png" },
+          { src: "web-app-manifest-512x512.png", sizes: "512x512", type: "image/png" },
           {
-            src: "/maskable-512.png",
+            src: "web-app-manifest-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "maskable",
+          },
+          {
+            src: "web-app-manifest-512x512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
