@@ -13,14 +13,25 @@ import { cn } from "@/lib/cn"
 
 export type ToastTone = "success" | "error" | "info"
 
+export interface ToastAction {
+  label: string
+  onClick: () => void
+}
+
 interface ToastItem {
   id: string
   message: string
   tone: ToastTone
+  action?: ToastAction
+}
+
+interface ToastOptions {
+  action?: ToastAction
+  duration?: number
 }
 
 interface ToastApi {
-  toast: (message: string, tone?: ToastTone) => void
+  toast: (message: string, tone?: ToastTone, opts?: ToastOptions) => void
 }
 
 const ToastContext = createContext<ToastApi | null>(null)
@@ -45,10 +56,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const toast = useCallback(
-    (message: string, tone: ToastTone = "info") => {
+    (message: string, tone: ToastTone = "info", opts?: ToastOptions) => {
       const id = uid("toast")
-      setItems((prev) => [...prev, { id, message, tone }])
-      setTimeout(() => remove(id), 3500)
+      setItems((prev) => [...prev, { id, message, tone, action: opts?.action }])
+      setTimeout(() => remove(id), opts?.duration ?? (opts?.action ? 5000 : 3500))
     },
     [remove],
   )
@@ -74,6 +85,17 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               >
                 <Icon size={18} className={cn("shrink-0", TONE_CLASS[t.tone])} />
                 <span className="flex-1 text-sm text-fg">{t.message}</span>
+                {t.action && (
+                  <button
+                    onClick={() => {
+                      t.action!.onClick()
+                      remove(t.id)
+                    }}
+                    className="shrink-0 text-sm font-semibold text-brand hover:text-brand/80"
+                  >
+                    {t.action.label}
+                  </button>
+                )}
                 <button
                   onClick={() => remove(t.id)}
                   className="text-muted hover:text-fg"

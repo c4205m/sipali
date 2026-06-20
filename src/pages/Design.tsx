@@ -27,6 +27,8 @@ import {
   IconBubble,
   EmptyState,
   CurrencyAmount,
+  SwipeList,
+  SwipeRow,
   useToast,
 } from "@/components/ui"
 import { todayISO } from "@/lib/dates"
@@ -58,6 +60,7 @@ export default function Design() {
       <SwitchesTabs />
       <Overlays />
       <ListsAndAmounts />
+      <SwipeDemo />
       <TypeReference />
     </div>
   )
@@ -175,6 +178,16 @@ function Buttons() {
         </Button>
         <Button variant="secondary" onClick={() => toast("Something failed", "error")}>
           Error toast
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() =>
+            toast("Transaction deleted", "info", {
+              action: { label: "Undo", onClick: () => toast("Restored", "success") },
+            })
+          }
+        >
+          Undo toast
         </Button>
       </div>
     </Section>
@@ -400,6 +413,45 @@ function ListsAndAmounts() {
         description="Add your first transaction to get started."
         action={<Button size="sm">Add transaction</Button>}
       />
+    </Section>
+  )
+}
+
+function SwipeDemo() {
+  const { toast } = useToast()
+  const action = (label: string, bg: string, onClick: () => void) => (
+    <button
+      onClick={onClick}
+      className="flex h-full w-[76px] flex-col items-center justify-center gap-1 text-xs font-medium text-white"
+      style={{ background: bg }}
+    >
+      {label}
+    </button>
+  )
+  return (
+    <Section title="Swipe row — single-open, leading/trailing actions">
+      <p className="text-xs text-muted">
+        Swipe right for leading actions, left for trailing. Opening one closes the others.
+        Tap a closed row for its action; tap an open row to close.
+      </p>
+      <SwipeList className="overflow-hidden rounded-xl border border-border">
+        {["Groceries", "Salary", "Coffee"].map((name) => (
+          <SwipeRow
+            key={name}
+            className="border-b border-border last:border-b-0"
+            onTap={() => toast(`Tapped ${name}`, "info")}
+            leading={action("Split", "#0ea5e9", () => toast("Split", "info"))}
+            trailing={
+              <>
+                {action("Edit", "#6e7bf2", () => toast("Edit", "info"))}
+                {action("Del", "#ef4444", () => toast("Removed", "info"))}
+              </>
+            }
+          >
+            <ListItem title={name} subtitle="Swipe me" />
+          </SwipeRow>
+        ))}
+      </SwipeList>
     </Section>
   )
 }

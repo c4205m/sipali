@@ -28,6 +28,12 @@ export default function Home() {
     customFrom: todayISO(),
     customTo: todayISO(),
   })
+  // Collapse the Upcoming scroller once the recent list is scrolled down.
+  const [upcomingCollapsed, setUpcomingCollapsed] = useState(false)
+  function onListScroll(e: React.UIEvent<HTMLDivElement>) {
+    const top = e.currentTarget.scrollTop
+    setUpcomingCollapsed((prev) => (top > 32 ? true : top < 8 ? false : prev))
+  }
 
   const displayCurrency = settings?.displayCurrency ?? "USD"
 
@@ -47,7 +53,7 @@ export default function Home() {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="flex h-[calc(100dvh-7rem)] flex-col gap-6 md:h-[calc(100dvh-6.5rem)]">
       <header>
         <p className="text-sm text-muted">{greeting()}</p>
         <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
@@ -60,19 +66,28 @@ export default function Home() {
         currency={displayCurrency}
       />
 
-      <UpcomingScroller />
+      <div
+        className="grid transition-all duration-300 ease-out"
+        style={{ gridTemplateRows: upcomingCollapsed ? "0fr" : "1fr", opacity: upcomingCollapsed ? 0 : 1 }}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <UpcomingScroller />
+        </div>
+      </div>
 
-      <section className="space-y-3">
+      <section className="flex min-h-0 flex-1 flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-fg">Recent activity</h2>
         </div>
         <IntervalFilter value={filters} onChange={setFilters} />
-        <Card className="p-2">
-          <TxList
-            txs={inRange.slice(0, 20)}
-            emptyTitle="Nothing here yet"
-            emptyDescription="Add a transaction to see it in this range."
-          />
+        <Card className="min-h-0 flex-1 overflow-hidden p-2">
+          <div className="no-scrollbar h-full overflow-y-auto" onScroll={onListScroll}>
+            <TxList
+              txs={inRange.slice(0, 20)}
+              emptyTitle="Nothing here yet"
+              emptyDescription="Add a transaction to see it in this range."
+            />
+          </div>
         </Card>
       </section>
 
