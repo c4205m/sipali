@@ -1,22 +1,109 @@
-import { icons, CircleDashed, type LucideProps } from "lucide-react"
+import {
+  ShoppingCart,
+  Utensils,
+  Car,
+  Home,
+  Plug,
+  HeartPulse,
+  Clapperboard,
+  ShoppingBag,
+  Briefcase,
+  Laptop,
+  Gift,
+  CircleDashed,
+  Wallet,
+  CreditCard,
+  Banknote,
+  Coins,
+  PiggyBank,
+  Landmark,
+  Plane,
+  Bus,
+  Train,
+  Fuel,
+  Coffee,
+  Pizza,
+  Wine,
+  Shirt,
+  Dumbbell,
+  GraduationCap,
+  BookOpen,
+  Gamepad2,
+  Music,
+  Film,
+  Phone,
+  Wifi,
+  Zap,
+  Droplet,
+  Flame,
+  Stethoscope,
+  Pill,
+  Baby,
+  Dog,
+  Scissors,
+  Hammer,
+  Sparkles,
+  Tag,
+  TrendingUp,
+  type LucideProps,
+  type LucideIcon,
+} from "lucide-react"
 
-// Convert a kebab-case icon name (as stored on categories) to lucide's
-// PascalCase component key.
-function toPascal(name: string): string {
-  return name
-    .split("-")
-    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-    .join("")
+// Curated, tree-shaken icon set for categories. Keeps bundle + SW precache
+// small (vs. importing the entire lucide set). Unknown names fall back.
+const ICONS: Record<string, LucideIcon> = {
+  "shopping-cart": ShoppingCart,
+  utensils: Utensils,
+  car: Car,
+  home: Home,
+  plug: Plug,
+  "heart-pulse": HeartPulse,
+  clapperboard: Clapperboard,
+  "shopping-bag": ShoppingBag,
+  briefcase: Briefcase,
+  laptop: Laptop,
+  gift: Gift,
+  "circle-dashed": CircleDashed,
+  wallet: Wallet,
+  "credit-card": CreditCard,
+  banknote: Banknote,
+  coins: Coins,
+  "piggy-bank": PiggyBank,
+  landmark: Landmark,
+  plane: Plane,
+  bus: Bus,
+  train: Train,
+  fuel: Fuel,
+  coffee: Coffee,
+  pizza: Pizza,
+  wine: Wine,
+  shirt: Shirt,
+  dumbbell: Dumbbell,
+  "graduation-cap": GraduationCap,
+  "book-open": BookOpen,
+  gamepad2: Gamepad2,
+  music: Music,
+  film: Film,
+  phone: Phone,
+  wifi: Wifi,
+  zap: Zap,
+  droplet: Droplet,
+  flame: Flame,
+  stethoscope: Stethoscope,
+  pill: Pill,
+  baby: Baby,
+  dog: Dog,
+  scissors: Scissors,
+  hammer: Hammer,
+  sparkles: Sparkles,
+  tag: Tag,
+  "trending-up": TrendingUp,
 }
 
-// Render a lucide icon by stored name, falling back to a neutral glyph.
+// Names available for the category picker.
+export const ICON_NAMES = Object.keys(ICONS)
+
 export function CategoryIcon({ name, ...props }: { name?: string } & LucideProps) {
-  if (!name) return <CircleDashed {...props} />
-  const Cmp = icons[toPascal(name) as keyof typeof icons] ?? CircleDashed
+  const Cmp = (name && ICONS[name]) || CircleDashed
   return <Cmp {...props} />
 }
-
-// All available icon names for the category editor (kebab-case).
-export const ICON_NAMES: string[] = Object.keys(icons).map((pascal) =>
-  pascal.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([A-Z][a-z])/g, "$1-$2").toLowerCase(),
-)

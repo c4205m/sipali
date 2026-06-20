@@ -76,8 +76,9 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 // Static class strings so Tailwind's scanner emits them (no dynamic bg-${t}).
 const TOKEN_SWATCHES: { name: string; cls: string }[] = [
+  { name: "bg-deep", cls: "bg-bg-deep" },
   { name: "bg", cls: "bg-bg" },
-  { name: "surface", cls: "bg-surface" },
+  { name: "surface (glass)", cls: "bg-surface" },
   { name: "surface-2", cls: "bg-surface-2" },
   { name: "surface-3", cls: "bg-surface-3" },
   { name: "border", cls: "bg-border" },
@@ -91,9 +92,12 @@ function Colors() {
     <Section title="Colors — theme tokens">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {TOKEN_SWATCHES.map((t) => (
-          <div key={t.name} className="overflow-hidden rounded-xl border border-border">
+          <div
+            key={t.name}
+            className="overflow-hidden rounded-xl border border-border bg-bg-deep"
+          >
             <div className={`h-14 ${t.cls}`} />
-            <div className="bg-surface px-2 py-1.5 text-xs text-muted">{t.name}</div>
+            <div className="px-2 py-1.5 text-xs text-muted">{t.name}</div>
           </div>
         ))}
       </div>

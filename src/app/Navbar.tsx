@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom"
-import { Home, ListOrdered, BarChart3, Settings, Palette } from "lucide-react"
+import { Home, ListOrdered, BarChart3, Settings } from "lucide-react"
 import { cn } from "@/lib/cn"
 
 const ITEMS = [
@@ -7,7 +7,6 @@ const ITEMS = [
   { to: "/ledger", label: "Ledger", icon: ListOrdered },
   { to: "/stats", label: "Stats", icon: BarChart3 },
   { to: "/settings", label: "Settings", icon: Settings },
-  { to: "/design", label: "Design", icon: Palette, dev: true },
 ]
 
 // Top bar on desktop, bottom tab bar on mobile.

@@ -15,7 +15,8 @@ import {
   Badge,
 } from "@/components/ui"
 import { useToast } from "@/components/ui/Toast"
-import { CategoryIcon } from "@/components/domain/CategoryIcon"
+import { CategoryIcon, ICON_NAMES } from "@/components/domain/CategoryIcon"
+import { cn } from "@/lib/cn"
 import {
   useCategories,
   addCategory,
@@ -188,19 +189,32 @@ function CategoryDrawer({
         <Field label="Name">
           <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Groceries" />
         </Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Color">
-            <input
-              type="color"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-              className="h-10 w-full cursor-pointer rounded-xl border border-border bg-surface-2"
-            />
-          </Field>
-          <Field label="Icon name" hint="lucide name, e.g. car">
-            <Input value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="shopping-cart" />
-          </Field>
-        </div>
+        <Field label="Color">
+          <input
+            type="color"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            className="h-10 w-full cursor-pointer rounded-xl border border-border bg-surface-2"
+          />
+        </Field>
+        <Field label="Icon">
+          <div className="grid max-h-44 grid-cols-6 gap-2 overflow-y-auto rounded-xl border border-border bg-surface-2 p-2">
+            {ICON_NAMES.map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => setIcon(n)}
+                aria-label={n}
+                className={cn(
+                  "flex aspect-square items-center justify-center rounded-lg transition-colors",
+                  icon === n ? "bg-brand text-brand-fg" : "text-muted hover:bg-surface-3 hover:text-fg",
+                )}
+              >
+                <CategoryIcon name={n} size={18} />
+              </button>
+            ))}
+          </div>
+        </Field>
         <Field label="Used for">
           <SegmentedControl
             className="w-full"
