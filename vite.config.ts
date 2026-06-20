@@ -2,13 +2,16 @@ import { defineConfig } from "vite"
 import react, { reactCompilerPreset } from "@vitejs/plugin-react"
 import babel from "@rolldown/plugin-babel"
 import { VitePWA } from "vite-plugin-pwa"
+import basicSsl from "@vitejs/plugin-basic-ssl"
 import { fileURLToPath, URL } from "node:url"
 
-// https://vite.dev/config/
 export default defineConfig({
+  server: { host: true },
+  preview: { host: true },
   plugins: [
     react(),
     babel({ presets: [reactCompilerPreset()] }),
+    basicSsl(),
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg", "apple-touch-icon.png"],
