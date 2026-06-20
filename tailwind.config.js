@@ -5,18 +5,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Surface scale (dark-first)
-        bg: "#0b0d10",
-        surface: "#14171c",
-        "surface-2": "#1b1f26",
-        "surface-3": "#242935",
-        border: "#2a2f3a",
-        muted: "#8a92a3",
-        fg: "#e7eaf0",
-        // Brand
+        // Deep blue-black base (page gradient endpoints)
+        bg: "#0a0e1c",
+        "bg-deep": "#05070f",
+        // Frosted glass surfaces — translucent white over the gradient.
+        surface: "rgba(255,255,255,0.045)",
+        "surface-2": "rgba(255,255,255,0.07)",
+        "surface-3": "rgba(255,255,255,0.11)",
+        border: "rgba(255,255,255,0.10)",
+        muted: "#8b93a8",
+        fg: "#eaf0ff",
+        // Indigo brand accent
         brand: {
-          DEFAULT: "#7c8cff",
-          fg: "#0b0d10",
+          DEFAULT: "#6e7bf2",
+          fg: "#05070f",
         },
       },
       borderRadius: {
@@ -27,11 +29,29 @@ export default {
         sans: ["Inter", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "ui-monospace", "monospace"],
       },
+      boxShadow: {
+        glow: "0 0 28px -4px rgba(110,123,242,0.45)",
+        "glow-sm": "0 0 16px -4px rgba(110,123,242,0.4)",
+        glass: "0 8px 32px -8px rgba(0,0,0,0.6), inset 0 1px 0 0 rgba(255,255,255,0.06)",
+      },
+      backdropBlur: {
+        xs: "2px",
+      },
       keyframes: {
         "fade-in": { from: { opacity: "0" }, to: { opacity: "1" } },
+        "blob-1": {
+          "0%,100%": { transform: "translate(0,0) scale(1)" },
+          "50%": { transform: "translate(40px,-30px) scale(1.15)" },
+        },
+        "blob-2": {
+          "0%,100%": { transform: "translate(0,0) scale(1)" },
+          "50%": { transform: "translate(-30px,40px) scale(1.1)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 0.15s ease-out",
+        "blob-1": "blob-1 18s ease-in-out infinite",
+        "blob-2": "blob-2 22s ease-in-out infinite",
       },
     },
   },

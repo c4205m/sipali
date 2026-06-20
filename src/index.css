@@ -6,13 +6,52 @@
 
 @layer base {
   html {
-    @apply bg-bg text-fg;
+    @apply text-fg;
     color-scheme: dark;
+    background-color: #05070f;
   }
   body {
     @apply font-sans antialiased;
     margin: 0;
-    min-height: 100vh;
+    min-height: 100dvh;
+    position: relative;
+    background:
+      radial-gradient(1200px 800px at 20% -10%, rgba(110, 123, 242, 0.12), transparent 60%),
+      radial-gradient(1000px 700px at 100% 10%, rgba(59, 130, 246, 0.1), transparent 55%),
+      linear-gradient(180deg, #0a0e1c 0%, #05070f 100%);
+    background-attachment: fixed;
+  }
+  /* Ambient drifting blobs behind content. */
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    z-index: -1;
+    border-radius: 9999px;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  body::before {
+    width: 420px;
+    height: 420px;
+    top: -80px;
+    left: -60px;
+    background: rgba(110, 123, 242, 0.18);
+    animation: blob-1 18s ease-in-out infinite;
+  }
+  body::after {
+    width: 380px;
+    height: 380px;
+    bottom: -100px;
+    right: -80px;
+    background: rgba(56, 189, 248, 0.14);
+    animation: blob-2 22s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body::before,
+    body::after {
+      animation: none;
+    }
   }
   * {
     border-color: theme("colors.border");
@@ -36,5 +75,15 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+  /* Frosted glass panel: translucent fill + blur + hairline + depth. */
+  .glass {
+    background-color: rgba(255, 255, 255, 0.045);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 8px 32px -8px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
   }
 }
