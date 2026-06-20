@@ -19,13 +19,13 @@ export function IntervalFilter({
 }) {
   return (
     <div className="space-y-2">
-      <div className="flex justify-center gap-1.5 sm:gap-2">
+      <div className="flex justify-center gap-1.5">
         {INTERVALS.map((i) => (
           <Chip
             key={i.value}
             active={value.interval === i.value}
             onClick={() => onChange({ ...value, interval: i.value })}
-            className="shrink-0 px-2.5 py-1 text-xs sm:px-3 sm:py-1.5 sm:text-sm"
+            className="shrink-0 px-2.5 py-1"
           >
             {i.label}
           </Chip>

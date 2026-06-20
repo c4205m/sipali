@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Plus, Star, Archive, ArchiveRestore } from "lucide-react"
 import {
   Card,
@@ -10,15 +10,29 @@ import {
   ListItem,
   Badge,
   Tooltip,
+  CurrencyAmount,
 } from "@/components/ui"
 import { useToast } from "@/components/ui/Toast"
 import { useAccounts, addAccount, archiveAccount } from "@/hooks/useAccounts"
+import { useTransactions } from "@/hooks/useTransactions"
+import { useSettings } from "@/hooks/useSettings"
+import { useRates } from "@/hooks/useRates"
+import { accountBalances } from "@/lib/balance"
 import { db } from "@/db/dexie"
 
 export function AccountSettings() {
   const accounts = useAccounts(true) ?? []
+  const txs = useTransactions()
+  const settings = useSettings()
+  const rates = useRates()
   const { toast } = useToast()
   const [name, setName] = useState("")
+
+  const displayCurrency = settings?.displayCurrency ?? "USD"
+  const balances = useMemo(
+    () => accountBalances(txs ?? [], displayCurrency, rates),
+    [txs, displayCurrency, rates],
+  )
 
   async function add() {
     if (!name.trim()) return
@@ -65,6 +79,13 @@ export function AccountSettings() {
                 {a.isDefault && <Badge tone="brand">Default</Badge>}
                 {a.isArchived && <Badge>Archived</Badge>}
               </span>
+            }
+            subtitle={
+              <CurrencyAmount
+                amount={balances.get(a.name) ?? 0}
+                currency={displayCurrency}
+                muted
+              />
             }
             trailing={
               <div className="flex gap-1">

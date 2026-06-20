@@ -20,7 +20,11 @@ export function CurrencyAmount({
   muted?: boolean
 }) {
   const meta = type ? TYPE_META[type] : null
-  const formatted = formatMoney(amount, currency, { signDisplay: "never" })
+  // With a type, the sign comes from meta (±/⇄), so hide the numeric sign.
+  // Without a type (e.g. account balance), show the natural sign so negatives read.
+  const formatted = formatMoney(amount, currency, {
+    signDisplay: meta ? "never" : "auto",
+  })
   return (
     <span
       className={cn(

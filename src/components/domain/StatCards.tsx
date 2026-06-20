@@ -24,7 +24,13 @@ export function StatCards({
   currency: string
 }) {
   const stats: Stat[] = [
-    { label: "Balance", value: balance, currency, icon: Wallet, tone: "text-fg" },
+    {
+      label: "Balance",
+      value: balance,
+      currency,
+      icon: Wallet,
+      tone: balance < 0 ? "text-red-400" : "text-fg",
+    },
     { label: "Income", value: income, currency, icon: TrendingUp, tone: "text-green-400" },
     { label: "Expense", value: expense, currency, icon: TrendingDown, tone: "text-red-400" },
   ]
