@@ -3,6 +3,7 @@ import type { ReactNode } from "react"
 import { cn } from "@/lib/cn"
 import { useIsMobile } from "@/hooks/useMediaQuery"
 import { useBlurOnOpen } from "@/hooks/useBlurOnOpen"
+import { guardSheetClose } from "@/lib/overlay"
 
 export type DrawerSide = "right" | "left" | "bottom"
 
@@ -42,6 +43,8 @@ export function Drawer({
       <Vaul.Portal>
         <Vaul.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
         <Vaul.Content
+          onInteractOutside={guardSheetClose}
+          onPointerDownOutside={guardSheetClose}
           className={cn(
             "glass fixed z-50 flex flex-col outline-none",
             SIDE_CLASSES[effectiveSide],

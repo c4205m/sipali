@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn"
 import { IconButton } from "@/components/ui/IconButton"
 import { useIsMobile } from "@/hooks/useMediaQuery"
 import { useBlurOnOpen } from "@/hooks/useBlurOnOpen"
+import { guardSheetClose } from "@/lib/overlay"
 
 export interface ModalProps {
   open: boolean
@@ -31,7 +32,11 @@ function MobileSheet({ open, onOpenChange, title, description, children, footer 
     <Vaul.Root open={open} onOpenChange={onOpenChange}>
       <Vaul.Portal>
         <Vaul.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
-        <Vaul.Content className="glass fixed inset-x-0 bottom-0 z-50 flex max-h-[92vh] flex-col rounded-t-2xl outline-none">
+        <Vaul.Content
+          onInteractOutside={guardSheetClose}
+          onPointerDownOutside={guardSheetClose}
+          className="glass fixed inset-x-0 bottom-0 z-50 flex max-h-[92vh] flex-col rounded-t-2xl outline-none"
+        >
           <div className="flex justify-center pt-2.5">
             <Vaul.Handle className="!h-1.5 !w-10 !bg-surface-3" />
           </div>
@@ -81,7 +86,12 @@ function CenteredModal({
                 className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
               />
             </Dialog.Overlay>
-            <Dialog.Content asChild forceMount>
+            <Dialog.Content
+              asChild
+              forceMount
+              onInteractOutside={guardSheetClose}
+              onPointerDownOutside={guardSheetClose}
+            >
               <div className="fixed inset-0 z-50 grid place-items-center p-4">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.96, y: 8 }}

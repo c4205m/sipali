@@ -1,6 +1,7 @@
 import * as RSelect from "@radix-ui/react-select"
 import { Check, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/cn"
+import { notifySelectOpenChange } from "@/lib/overlay"
 
 export interface SelectOption {
   value: string
@@ -23,7 +24,12 @@ export function Select({
   disabled?: boolean
 }) {
   return (
-    <RSelect.Root value={value} onValueChange={onValueChange} disabled={disabled}>
+    <RSelect.Root
+      value={value}
+      onValueChange={onValueChange}
+      disabled={disabled}
+      onOpenChange={notifySelectOpenChange}
+    >
       <RSelect.Trigger
         className={cn(
           "inline-flex h-10 w-full items-center justify-between gap-2 rounded-xl border border-border bg-surface-2 px-3 text-sm text-fg",
