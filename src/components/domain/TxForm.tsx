@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import { ClipboardPaste } from "lucide-react"
 import {
   Button,
   Field,
@@ -72,19 +73,42 @@ export function TxForm({
   const [installment, setInstallment] = useState(false)
   const [installmentTotal, setInstallmentTotal] = useState<number | "">(12)
   const [code, setCode] = useState("")
+  const [showCodeInput, setShowCodeInput] = useState(false)
 
-  function applyCode() {
-    if (!code.trim()) return
+  // Decode a split code string and populate the form. Returns success.
+  function fillFromCode(raw: string): boolean {
+    if (!raw.trim()) {
+      toast("No code found", "error")
+      return false
+    }
     try {
-      const owe = decodeOweCode(code)
+      const owe = decodeOweCode(raw)
       setType("expense")
       setName(owe.payer ? `${owe.title} (split)` : owe.title)
       setPrice(owe.amount)
       setCurrency(owe.currency)
-      setCode("")
       toast("Filled from split code", "success")
+      return true
     } catch {
       toast("Invalid split code", "error")
+      return false
+    }
+  }
+
+  // One-tap: read the clipboard and fill. Reveal a manual input if blocked.
+  async function pasteCode() {
+    try {
+      const text = await navigator.clipboard.readText()
+      if (fillFromCode(text)) setShowCodeInput(false)
+    } catch {
+      setShowCodeInput(true)
+    }
+  }
+
+  function applyManualCode() {
+    if (fillFromCode(code)) {
+      setCode("")
+      setShowCodeInput(false)
     }
   }
 
@@ -177,16 +201,24 @@ export function TxForm({
   return (
     <div className="space-y-4">
       {!isEdit && (
-        <div className="flex gap-2 rounded-xl border border-border bg-surface p-2">
-          <Input
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="Paste split code…"
-            className="flex-1"
-          />
-          <Button variant="secondary" onClick={applyCode} disabled={!code.trim()}>
-            Fill
+        <div className="space-y-2">
+          <Button type="button" variant="outline" fullWidth onClick={pasteCode}>
+            <ClipboardPaste size={16} /> Paste split code
           </Button>
+          {showCodeInput && (
+            <div className="flex gap-2">
+              <Input
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="Paste code here…"
+                className="flex-1"
+                autoFocus
+              />
+              <Button variant="secondary" onClick={applyManualCode} disabled={!code.trim()}>
+                Fill
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
