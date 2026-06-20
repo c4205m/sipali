@@ -75,6 +75,21 @@
       display: none;
     }
   }
+  /* Disable text selection / long-press callout on touch devices for an
+     app-like feel; keep inputs and editable fields selectable. */
+  @media (hover: none) and (pointer: coarse) {
+    * {
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    input,
+    textarea,
+    [contenteditable="true"] {
+      -webkit-user-select: text;
+      user-select: text;
+    }
+  }
 }
 
 @layer utilities {

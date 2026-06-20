@@ -37,14 +37,19 @@ export function DataSettings() {
         Everything is stored locally in your browser. Export regularly to keep a backup.
       </p>
 
-      <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" onClick={() => downloadBackup()}>
+      <div className="flex gap-2">
+        <Button variant="secondary" size="sm" className="flex-1" onClick={() => downloadBackup()}>
           <Download size={16} /> Export
         </Button>
-        <Button variant="secondary" onClick={() => fileRef.current?.click()}>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="flex-1"
+          onClick={() => fileRef.current?.click()}
+        >
           <Upload size={16} /> Import
         </Button>
-        <Button variant="danger" onClick={() => setConfirmClear(true)}>
+        <Button variant="danger" size="sm" className="flex-1" onClick={() => setConfirmClear(true)}>
           <Trash2 size={16} /> Clear all
         </Button>
         <input

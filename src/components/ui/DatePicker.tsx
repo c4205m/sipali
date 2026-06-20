@@ -18,10 +18,13 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
         value={value}
         onChange={(e) => onValueChange(e.target.value)}
         className={cn(
-          "h-10 w-full rounded-xl border border-border bg-surface-2 px-3 text-sm text-fg",
+          "block h-10 min-h-10 w-full appearance-none rounded-xl border border-border bg-surface-2 px-3 text-sm text-fg",
           "transition-colors focus-visible:outline-none focus-visible:border-brand",
           "focus-visible:ring-2 focus-visible:ring-brand/30",
           "[color-scheme:dark]",
+          // iOS: left-align and de-pad the rendered value; tint the picker icon.
+          "[&::-webkit-date-and-time-value]:m-0 [&::-webkit-date-and-time-value]:text-left",
+          "[&::-webkit-calendar-picker-indicator]:opacity-60",
           className,
         )}
         {...rest}
