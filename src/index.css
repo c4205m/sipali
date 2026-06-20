@@ -66,6 +66,15 @@
   ::-webkit-scrollbar-track {
     background: transparent;
   }
+  /* Hide scrollbars on phones for a cleaner, app-like feel. */
+  @media (max-width: 767px) {
+    * {
+      scrollbar-width: none;
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
 
 @layer utilities {

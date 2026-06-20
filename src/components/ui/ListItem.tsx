@@ -54,7 +54,7 @@ export function IconBubble({
   return (
     <div
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-full text-white",
+        "flex h-9 w-9 items-center justify-center rounded-full text-white chuck",
         className,
       )}
       style={{ backgroundColor: color ?? "#2a2f3a" }}

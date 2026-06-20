@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   Button,
   Field,
@@ -46,6 +46,13 @@ export function TxForm({
   const isEdit = !!existing
 
   const [type, setType] = useState<TransactionType>(existing?.type ?? "expense")
+  // Type-dependent fields swap only after the segmented slide settles, so the
+  // layout doesn't jump mid-animation.
+  const [layoutType, setLayoutType] = useState<TransactionType>(type)
+  useEffect(() => {
+    const id = setTimeout(() => setLayoutType(type), 240)
+    return () => clearTimeout(id)
+  }, [type])
   const [name, setName] = useState(existing?.name ?? "")
   const [price, setPrice] = useState<number | "">(existing?.price ?? "")
   const [currency, setCurrency] = useState(
@@ -87,10 +94,10 @@ export function TxForm({
   )
   const categoryOptions = useMemo(() => {
     const filtered = categories.filter(
-      (c) => !c.categoryType || (type !== "transfer" && c.categoryType === type),
+      (c) => !c.categoryType || (layoutType !== "transfer" && c.categoryType === layoutType),
     )
     return filtered.map((c) => ({ value: c.id, label: c.name }))
-  }, [categories, type])
+  }, [categories, layoutType])
 
   const currencyOpts = useMemo(
     () => currencyOptions(settings?.enabledCurrencies ?? [currency]),
@@ -207,12 +214,12 @@ export function TxForm({
         <Field label="Date">
           <DatePicker value={date} onValueChange={setDate} />
         </Field>
-        <Field label={type === "transfer" ? "From account" : "Account"}>
+        <Field label={layoutType === "transfer" ? "From account" : "Account"}>
           <Select value={account} onValueChange={setAccount} options={accountOptions} />
         </Field>
       </div>
 
-      {type === "transfer" && (
+      {layoutType === "transfer" && (
         <Field label="To account">
           <Select
             value={toAccount}
@@ -222,7 +229,7 @@ export function TxForm({
         </Field>
       )}
 
-      {type !== "transfer" && (
+      {layoutType !== "transfer" && (
         <Field label="Category">
           <Select
             value={categoryId}
@@ -233,7 +240,7 @@ export function TxForm({
         </Field>
       )}
 
-      {type === "expense" && (
+      {layoutType === "expense" && (
         <Field label="Importance">
           <ChipGroup
             options={IMPORTANCE_OPTIONS.map((o) => ({
@@ -258,7 +265,7 @@ export function TxForm({
               if (v) setInstallment(false)
             }}
           />
-          {type === "expense" && (
+          {layoutType === "expense" && (
             <SwitchRow
               label="Installment"
               description="Split into equal payments"
@@ -289,10 +296,9 @@ export function TxForm({
       )}
 
       <div className="flex justify-end gap-2 pt-1">
-        <Button variant="ghost" onClick={onDone}>
-          Cancel
+        <Button fullWidth onClick={submit}>
+          {isEdit ? "Save" : "Add"}
         </Button>
-        <Button onClick={submit}>{isEdit ? "Save" : "Add"}</Button>
       </div>
     </div>
   )

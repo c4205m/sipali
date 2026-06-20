@@ -1,25 +1,15 @@
-import * as Dialog from "@radix-ui/react-dialog"
-import { AnimatePresence, motion, type TargetAndTransition } from "framer-motion"
-import { X } from "lucide-react"
+import { Drawer as Vaul } from "vaul"
 import type { ReactNode } from "react"
 import { cn } from "@/lib/cn"
-import { IconButton } from "@/components/ui/IconButton"
+import { useIsMobile } from "@/hooks/useMediaQuery"
+import { useBlurOnOpen } from "@/hooks/useBlurOnOpen"
 
 export type DrawerSide = "right" | "left" | "bottom"
 
 const SIDE_CLASSES: Record<DrawerSide, string> = {
-  right: "inset-y-0 right-0 h-full w-[min(28rem,90vw)] rounded-l-2xl",
-  left: "inset-y-0 left-0 h-full w-[min(28rem,90vw)] rounded-r-2xl",
-  bottom: "inset-x-0 bottom-0 max-h-[88vh] w-full rounded-t-2xl",
-}
-
-const SIDE_MOTION: Record<
-  DrawerSide,
-  { initial: TargetAndTransition; animate: TargetAndTransition; exit: TargetAndTransition }
-> = {
-  right: { initial: { x: "100%" }, animate: { x: 0 }, exit: { x: "100%" } },
-  left: { initial: { x: "-100%" }, animate: { x: 0 }, exit: { x: "-100%" } },
-  bottom: { initial: { y: "100%" }, animate: { y: 0 }, exit: { y: "100%" } },
+  right: "inset-y-0 right-0 h-full w-[min(28rem,92vw)] rounded-l-2xl",
+  left: "inset-y-0 left-0 h-full w-[min(28rem,92vw)] rounded-r-2xl",
+  bottom: "inset-x-0 bottom-0 max-h-[92vh] rounded-t-2xl",
 }
 
 export interface DrawerProps {
@@ -32,7 +22,8 @@ export interface DrawerProps {
   className?: string
 }
 
-// Slide-in panel (sheet). Used for forms and advanced filters.
+// Slide-in sheet. Rises from the bottom (swipe-down to dismiss) on phones,
+// slides from the configured side on desktop. Built on Vaul.
 export function Drawer({
   open,
   onOpenChange,
@@ -42,51 +33,37 @@ export function Drawer({
   footer,
   className,
 }: DrawerProps) {
+  const isMobile = useIsMobile()
+  const effectiveSide: DrawerSide = isMobile ? "bottom" : side
+  useBlurOnOpen(open)
+
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <AnimatePresence>
-        {open && (
-          <Dialog.Portal forceMount>
-            <Dialog.Overlay asChild forceMount>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-              />
-            </Dialog.Overlay>
-            <Dialog.Content asChild forceMount>
-              <motion.div
-                {...SIDE_MOTION[side]}
-                transition={{ type: "spring", stiffness: 360, damping: 34 }}
-                className={cn(
-                  "glass fixed z-50 flex flex-col",
-                  SIDE_CLASSES[side],
-                  className,
-                )}
-              >
-                <div className="flex items-center justify-between border-b border-border p-4">
-                  <Dialog.Title className="text-base font-semibold text-fg">
-                    {title}
-                  </Dialog.Title>
-                  <Dialog.Close asChild>
-                    <IconButton label="Close" size="sm">
-                      <X size={18} />
-                    </IconButton>
-                  </Dialog.Close>
-                </div>
-                <div className="flex-1 overflow-y-auto p-4">{children}</div>
-                {footer && (
-                  <div className="flex justify-end gap-2 border-t border-border p-4">
-                    {footer}
-                  </div>
-                )}
-              </motion.div>
-            </Dialog.Content>
-          </Dialog.Portal>
-        )}
-      </AnimatePresence>
-    </Dialog.Root>
+    <Vaul.Root open={open} onOpenChange={onOpenChange} direction={effectiveSide}>
+      <Vaul.Portal>
+        <Vaul.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
+        <Vaul.Content
+          className={cn(
+            "glass fixed z-50 flex flex-col outline-none",
+            SIDE_CLASSES[effectiveSide],
+            className,
+          )}
+        >
+          {effectiveSide === "bottom" && (
+            <div className="flex justify-center pt-2.5">
+              <Vaul.Handle className="!h-1.5 !w-10 !bg-surface-3" />
+            </div>
+          )}
+          <div className="p-4 pb-3">
+            <Vaul.Title className="text-base font-semibold text-fg">{title}</Vaul.Title>
+          </div>
+          <div className={cn("flex-1 overflow-y-auto px-4 pb-4", isMobile && "no-scrollbar")}>
+            {children}
+          </div>
+          {footer && (
+            <div className="flex justify-end gap-2 border-t border-border p-4">{footer}</div>
+          )}
+        </Vaul.Content>
+      </Vaul.Portal>
+    </Vaul.Root>
   )
 }

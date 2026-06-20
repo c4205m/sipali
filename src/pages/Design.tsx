@@ -315,6 +315,10 @@ function Overlays() {
   const [drawer, setDrawer] = useState(false)
   return (
     <Section title="Overlays — modal, drawer, popover, tooltip">
+      <p className="text-xs text-muted">
+        On phones, Modal and Drawer both become bottom sheets (grab handle, swipe down or
+        tap outside to dismiss). On desktop, Modal is centered and Drawer slides from the right.
+      </p>
       <div className="flex flex-wrap gap-2">
         <Button variant="secondary" onClick={() => setModal(true)}>
           Open modal
