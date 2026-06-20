@@ -39,3 +39,8 @@ export async function deleteTransaction(id: string): Promise<void> {
 export async function archiveTransaction(id: string, archived = true): Promise<void> {
   await db.transactions.update(id, { isArchived: archived })
 }
+
+// Re-insert a previously deleted transaction (for undo).
+export async function restoreTransaction(tx: Transaction): Promise<void> {
+  await db.transactions.put(tx)
+}

@@ -19,7 +19,7 @@ export function IntervalFilter({
 }) {
   return (
     <div className="space-y-2">
-      <div className="no-scrollbar flex gap-2 overflow-x-auto">
+      <div className="flex flex-wrap justify-center gap-2">
         {INTERVALS.map((i) => (
           <Chip
             key={i.value}
