@@ -1,0 +1,1 @@
+function e(e,t,n,r){if(!r||t===n)return e;let i=r.rates[t],a=r.rates[n];return!i||!a?e:e/i*a}export{e as t};

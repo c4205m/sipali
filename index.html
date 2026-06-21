@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" style="background-color: #05070f">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="./favicon-96x96.png" />
+    <link rel="shortcut icon" href="./favicon.ico" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#05070f" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="sipali" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <title>sipali — finance tracker</title>
+    <style>
+      /* Boot aurora — shown before React/CSS load, replaced on mount. */
+      #boot {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        overflow: hidden;
+        background: #05070f;
+        pointer-events: none;
+        opacity: 1;
+        transition: opacity 0.45s ease-out;
+      }
+      #boot.hide {
+        opacity: 0;
+      }
+      #boot i {
+        position: absolute;
+        aspect-ratio: 1;
+        border-radius: 9999px;
+        filter: blur(60px);
+        mix-blend-mode: screen;
+      }
+      #boot .a {
+        width: 85%;
+        top: -8%;
+        left: -6%;
+        background: radial-gradient(circle, rgba(110, 123, 242, 0.7), transparent 68%);
+        animation: ba 8s ease-in-out infinite;
+      }
+      #boot .b {
+        width: 65%;
+        top: 0;
+        right: -8%;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.6), transparent 70%);
+        animation: bb 11.5s ease-in-out infinite;
+      }
+      #boot .c {
+        width: 95%;
+        bottom: -12%;
+        left: -10%;
+        background: radial-gradient(circle, rgba(168, 139, 250, 0.55), transparent 70%);
+        animation: bc 9.5s ease-in-out infinite;
+      }
+      #boot .d {
+        width: 70%;
+        bottom: -2%;
+        right: -2%;
+        background: radial-gradient(circle, rgba(244, 114, 182, 0.45), transparent 72%);
+        animation: bd 13s ease-in-out infinite;
+      }
+      @keyframes ba { 0%,100% { transform: translate(0,0) } 50% { transform: translate(55%,35%) } }
+      @keyframes bb { 0%,100% { transform: translate(0,0) } 50% { transform: translate(-30%,55%) } }
+      @keyframes bc { 0%,100% { transform: translate(0,0) } 50% { transform: translate(35%,-50%) } }
+      @keyframes bd { 0%,100% { transform: translate(0,0) } 50% { transform: translate(-55%,-25%) } }
+      @media (prefers-reduced-motion: reduce) { #boot i { animation: none } }
+    </style>
+    <script type="module" crossorigin src="/sipali/assets/index-C5aMQ1BZ.js"></script>
+    <link rel="stylesheet" crossorigin href="/sipali/assets/index-DUnk1LKT.css">
+  <link rel="manifest" href="/sipali/manifest.webmanifest"></head>
+  <body class="dark" style="background-color: #05070f; margin: 0">
+    <div id="root"></div>
+    <div id="boot"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></div>
+  </body>
+</html>
