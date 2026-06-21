@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Pencil, Trash2, Split } from "lucide-react"
-import { Drawer, EmptyState, SwipeList, SwipeRow } from "@/components/ui"
+import { Drawer, EmptyState, SwipeList, SwipeRow, ListSkeleton } from "@/components/ui"
 import { useToast } from "@/components/ui/Toast"
 import { TxRow } from "@/components/domain/TxRow"
 import { TxForm } from "@/components/domain/TxForm"
@@ -40,10 +40,12 @@ function ActionPanel({
 // left (expenses) for split. Remove is undoable via toast.
 export function TxList({
   txs,
+  loading,
   emptyTitle = "No transactions",
   emptyDescription,
 }: {
   txs: Transaction[]
+  loading?: boolean
   emptyTitle?: string
   emptyDescription?: string
 }) {
@@ -55,6 +57,7 @@ export function TxList({
   const [editing, setEditing] = useState<Transaction | null>(null)
   const [splitting, setSplitting] = useState<Transaction | null>(null)
 
+  if (loading) return <ListSkeleton />
   if (txs.length === 0) {
     return (
       <EmptyState title={emptyTitle} description={emptyDescription} className="h-full border-0" />

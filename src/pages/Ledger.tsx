@@ -57,6 +57,7 @@ export default function Ledger() {
         <div className="no-scrollbar h-full overflow-y-auto">
           <TxList
             txs={filtered}
+            loading={txs === undefined}
             emptyTitle="No matching transactions"
             emptyDescription={count > 0 ? "Try adjusting your filters." : "Add your first transaction."}
           />

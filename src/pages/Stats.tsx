@@ -53,6 +53,8 @@ export default function Stats() {
   const top = useMemo(() => topByDescription(ranged, cur, rates), [ranged, cur, rates])
   const imp = useMemo(() => byImportance(ranged, cur, rates), [ranged, cur, rates])
 
+  const loading = txs === undefined
+
   return (
     <div className="space-y-4">
       <header className="flex items-center justify-between">
@@ -64,25 +66,25 @@ export default function Stats() {
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="md:col-span-2">
-          <ChartCard title="Income vs expenses" isEmpty={ie.length === 0}>
+          <ChartCard title="Income vs expenses" loading={loading} isEmpty={ie.length === 0}>
             <IncomeExpenseChart data={ie} />
           </ChartCard>
         </div>
         <div className="md:col-span-2">
-          <ChartCard title="Daily activity" isEmpty={daily.length === 0}>
+          <ChartCard title="Daily activity" loading={loading} isEmpty={daily.length === 0}>
             <ActivityChart data={daily} />
           </ChartCard>
         </div>
-        <ChartCard title="Spending by category" isEmpty={expCat.length === 0}>
+        <ChartCard title="Spending by category" loading={loading} isEmpty={expCat.length === 0}>
           <CategoryDonut data={expCat} />
         </ChartCard>
-        <ChartCard title="Income sources" isEmpty={incCat.length === 0}>
+        <ChartCard title="Income sources" loading={loading} isEmpty={incCat.length === 0}>
           <CategoryDonut data={incCat} />
         </ChartCard>
-        <ChartCard title="Top expenses" isEmpty={top.length === 0}>
+        <ChartCard title="Top expenses" loading={loading} isEmpty={top.length === 0}>
           <TopExpensesChart data={top} />
         </ChartCard>
-        <ChartCard title="Need / Want / Saving" isEmpty={imp.length === 0}>
+        <ChartCard title="Need / Want / Saving" loading={loading} isEmpty={imp.length === 0}>
           <CategoryDonut data={imp} />
         </ChartCard>
       </div>

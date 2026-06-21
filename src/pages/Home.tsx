@@ -84,6 +84,7 @@ export default function Home() {
           <div className="no-scrollbar h-full overflow-y-auto" onScroll={onListScroll}>
             <TxList
               txs={inRange}
+              loading={txs === undefined}
               emptyTitle="Nothing here yet"
               emptyDescription="Add a transaction to see it in this range."
             />

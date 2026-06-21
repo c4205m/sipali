@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react"
 import { Routes, Route, Navigate } from "react-router-dom"
 import { Layout } from "@/app/Layout"
-import { Spinner } from "@/components/ui/Spinner"
+import { HomeSkeleton } from "@/components/domain/HomeSkeleton"
 
 // Lazy-load pages so heavy deps (recharts, etc.) load on demand.
 const Home = lazy(() => import("@/pages/Home"))
@@ -12,11 +12,7 @@ const Design = lazy(() => import("@/pages/Design"))
 const SplitView = lazy(() => import("@/pages/SplitView"))
 
 function PageFallback() {
-  return (
-    <div className="grid min-h-[40vh] place-items-center">
-      <Spinner size={22} className="text-muted" />
-    </div>
-  )
+  return <HomeSkeleton />
 }
 
 export function AppRoutes() {

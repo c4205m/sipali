@@ -29,6 +29,8 @@ import {
   CurrencyAmount,
   SwipeList,
   SwipeRow,
+  Skeleton,
+  ListSkeleton,
   useToast,
 } from "@/components/ui"
 import { todayISO } from "@/lib/dates"
@@ -61,6 +63,7 @@ export default function Design() {
       <Overlays />
       <ListsAndAmounts />
       <SwipeDemo />
+      <Skeletons />
       <TypeReference />
     </div>
   )
@@ -452,6 +455,24 @@ function SwipeDemo() {
           </SwipeRow>
         ))}
       </SwipeList>
+    </Section>
+  )
+}
+
+function Skeletons() {
+  return (
+    <Section title="Loading skeletons">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Chart placeholder</CardTitle>
+          </CardHeader>
+          <Skeleton className="h-40 w-full rounded-xl" />
+        </Card>
+        <Card className="p-2">
+          <ListSkeleton rows={4} />
+        </Card>
+      </div>
     </Section>
   )
 }

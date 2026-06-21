@@ -39,19 +39,9 @@ export default {
       },
       keyframes: {
         "fade-in": { from: { opacity: "0" }, to: { opacity: "1" } },
-        "blob-1": {
-          "0%,100%": { transform: "translate(0,0) scale(1)" },
-          "50%": { transform: "translate(40px,-30px) scale(1.15)" },
-        },
-        "blob-2": {
-          "0%,100%": { transform: "translate(0,0) scale(1)" },
-          "50%": { transform: "translate(-30px,40px) scale(1.1)" },
-        },
       },
       animation: {
         "fade-in": "fade-in 0.15s ease-out",
-        "blob-1": "blob-1 18s ease-in-out infinite",
-        "blob-2": "blob-2 22s ease-in-out infinite",
       },
     },
   },
