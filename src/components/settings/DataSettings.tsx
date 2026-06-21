@@ -33,8 +33,14 @@ export function DataSettings() {
       <CardHeader>
         <CardTitle>Data</CardTitle>
       </CardHeader>
-      <p className="mb-4 text-xs text-muted">
-        Everything is stored locally in your browser. Export regularly to keep a backup.
+      <p className="mb-2 text-xs leading-relaxed text-muted">
+        All your data lives exclusively in this browser's local storage — nothing is sent to any
+        server or collected anywhere. Clearing browser data or switching devices will erase
+        everything.
+      </p>
+      <p className="mb-4 text-xs leading-relaxed text-brand/80">
+        Back up regularly. Export saves your transactions, categories, and settings as a JSON file
+        you can restore anytime.
       </p>
 
       <div className="flex gap-2">
