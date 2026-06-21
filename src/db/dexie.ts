@@ -7,6 +7,7 @@ import type {
   InstallmentPlan,
   AppSettings,
   ExchangeRates,
+  RateHistoryRecord,
 } from "@/types"
 
 // Local-only IndexedDB store. No backend, no sync.
@@ -18,6 +19,7 @@ export class SipaliDB extends Dexie {
   installmentPlans!: Table<InstallmentPlan, string>
   settings!: Table<AppSettings, string>
   rates!: Table<ExchangeRates, string>
+  rateHistory!: Table<RateHistoryRecord, string>
 
   constructor() {
     super("sipali")
@@ -31,6 +33,7 @@ export class SipaliDB extends Dexie {
       installmentPlans: "id, nextDue, isArchived",
       settings: "id",
       rates: "id",
+      rateHistory: "date",
     })
   }
 }

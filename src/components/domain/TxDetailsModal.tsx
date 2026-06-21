@@ -4,9 +4,10 @@ import { CategoryIcon } from "@/components/domain/CategoryIcon"
 import { useCategoryMap } from "@/hooks/useCategories"
 import { useSettings } from "@/hooks/useSettings"
 import { useRates } from "@/hooks/useRates"
+import { useDayRate } from "@/hooks/useDayRate"
 import { convert } from "@/lib/fx"
 import { formatDate } from "@/lib/dates"
-import { formatMoney } from "@/lib/money"
+import { formatMoney, formatNumber } from "@/lib/money"
 import { TYPE_META, IMPORTANCE_OPTIONS, type Transaction } from "@/types"
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
@@ -37,14 +38,29 @@ export function TxDetailsModal({
   const catMap = useCategoryMap()
   const settings = useSettings()
   const rates = useRates()
+  const displayCurrency = settings?.displayCurrency ?? "USD"
+  const isForeign = !!tx && tx.currency !== displayCurrency
+  const day = useDayRate(
+    isForeign ? tx.date : undefined,
+    isForeign ? [tx.currency, displayCurrency] : [],
+  )
   if (!tx) return null
 
   const category = catMap.get(tx.categoryId)
   const meta = TYPE_META[tx.type]
-  const displayCurrency = settings?.displayCurrency ?? "USD"
-  const converted =
-    tx.currency !== displayCurrency
-      ? convert(tx.price, tx.currency, displayCurrency, rates)
+  const converted = isForeign ? convert(tx.price, tx.currency, displayCurrency, rates) : null
+  const dayConverted =
+    isForeign && day.rates
+      ? convert(tx.price, tx.currency, displayCurrency, {
+          id: "rates",
+          base: "USD",
+          rates: day.rates,
+          updatedAt: tx.date,
+        })
+      : null
+  const dayRate =
+    isForeign && day.rates?.[tx.currency] && day.rates?.[displayCurrency]
+      ? day.rates[displayCurrency] / day.rates[tx.currency]
       : null
   const importance = IMPORTANCE_OPTIONS.find((o) => o.value === tx.importance)
 
@@ -90,6 +106,22 @@ export function TxDetailsModal({
           {importance && (
             <Row label="Importance">
               <Badge color={importance.color}>{importance.label}</Badge>
+            </Row>
+          )}
+          {isForeign && (
+            <Row label="Logged-day rate">
+              {day.loading ? (
+                "…"
+              ) : dayConverted != null && dayRate != null ? (
+                <span className="text-right">
+                  ≈ {formatMoney(dayConverted, displayCurrency)}
+                  <span className="block text-xs text-muted">
+                    1 {tx.currency} = {formatNumber(dayRate, 4)} {displayCurrency}
+                  </span>
+                </span>
+              ) : (
+                "unavailable"
+              )}
             </Row>
           )}
           {tx.isRecurring && <Row label="Recurring">{tx.recurringInterval}</Row>}

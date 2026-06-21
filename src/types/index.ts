@@ -36,7 +36,6 @@ export interface Transaction {
   transferPairId?: string
   isArchived?: boolean
   createdAt: string
-  // Backrefs to the source schedule (set on materialized rows).
   templateId?: string
   planId?: string
 }
@@ -153,6 +152,11 @@ export interface ExchangeRates {
   base: string
   rates: Record<string, number>
   updatedAt: string
+}
+
+export interface RateHistoryRecord {
+  date: string
+  rates: Record<string, number>
 }
 
 export const DEFAULT_CURRENCIES = ["USD", "EUR", "TRY"]

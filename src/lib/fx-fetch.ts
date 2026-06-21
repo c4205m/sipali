@@ -1,11 +1,13 @@
-// Live exchange rates from the free, key-less fawazahmed0 currency API (USD base).
-// Response shape: { date, usd: { eur: 0.9, xau: 0.0004, ... } } — lowercase codes,
-// value = units of <code> per 1 USD.
-const PRIMARY = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json"
-const FALLBACK = "https://latest.currency-api.pages.dev/v1/currencies/usd.json"
+import { todayISO } from "@/lib/dates"
 
-// Grams in one troy ounce — used to derive gram gold (GXAU) from ounce gold (XAU).
 const GRAMS_PER_TROY_OZ = 31.1034768
+
+function sources(version: string): string[] {
+  return [
+    `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${version}/v1/currencies/usd.json`,
+    `https://${version}.currency-api.pages.dev/v1/currencies/usd.json`,
+  ]
+}
 
 async function fetchJson(url: string): Promise<{ usd?: Record<string, number> }> {
   const res = await fetch(url)
@@ -13,18 +15,19 @@ async function fetchJson(url: string): Promise<{ usd?: Record<string, number> }>
   return res.json()
 }
 
-// Build a USD-based rate map for the requested currency codes. XAU comes from
-// the API; GXAU is derived (gram gold = ounce gold × grams/oz).
-export async function fetchLiveRates(codes: string[]): Promise<Record<string, number>> {
+async function fetchUsd(version: string): Promise<Record<string, number>> {
+  const [primary, fallback] = sources(version)
   let data: { usd?: Record<string, number> }
   try {
-    data = await fetchJson(PRIMARY)
+    data = await fetchJson(primary)
   } catch {
-    data = await fetchJson(FALLBACK)
+    data = await fetchJson(fallback)
   }
-  const usd = data.usd
-  if (!usd) throw new Error("Rate provider returned no data")
+  if (!data.usd) throw new Error("Rate provider returned no data")
+  return data.usd
+}
 
+function buildMap(usd: Record<string, number>, codes: string[]): Record<string, number> {
   const out: Record<string, number> = { USD: 1 }
   for (const code of codes) {
     if (code === "USD") continue
@@ -36,7 +39,17 @@ export async function fetchLiveRates(codes: string[]): Promise<Record<string, nu
     const v = usd[code.toLowerCase()]
     if (v != null) out[code] = v
   }
-  // Always include ounce gold if available, even when not explicitly requested.
   if (usd["xau"] != null) out.XAU = usd["xau"]
   return out
+}
+
+export async function fetchLiveRates(codes: string[]): Promise<Record<string, number>> {
+  return buildMap(await fetchUsd("latest"), codes)
+}
+
+export async function fetchRatesByDate(
+  date: string,
+  codes: string[],
+): Promise<Record<string, number>> {
+  return buildMap(await fetchUsd(date === todayISO() ? "latest" : date), codes)
 }
