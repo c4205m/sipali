@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { seedIfEmpty } from "@/db/seed"
+import { refreshRates } from "@/hooks/useRates"
 
 // Run the one-time default seed before rendering data-dependent UI.
 export function useSeed(): boolean {
@@ -10,6 +11,7 @@ export function useSeed(): boolean {
       .catch((e) => console.error("seed failed", e))
       .finally(() => {
         if (active) setReady(true)
+        refreshRates().catch(() => {})
       })
     return () => {
       active = false
