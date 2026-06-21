@@ -111,6 +111,15 @@
   }
 }
 
+[class*="recharts"],
+[class*="recharts"]:focus,
+[class*="recharts"]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
