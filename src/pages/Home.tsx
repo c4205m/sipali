@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { Card } from "@/components/ui"
 import { StatCards } from "@/components/domain/StatCards"
 import { UpcomingScroller } from "@/components/domain/UpcomingScroller"
@@ -28,11 +28,26 @@ export default function Home() {
     customFrom: todayISO(),
     customTo: todayISO(),
   })
-  // Collapse the Upcoming scroller once the recent list is scrolled down.
   const [upcomingCollapsed, setUpcomingCollapsed] = useState(false)
-  function onListScroll(e: React.UIEvent<HTMLDivElement>) {
-    const top = e.currentTarget.scrollTop
-    setUpcomingCollapsed((prev) => (top > 32 ? true : top < 8 ? false : prev))
+  const touchY = useRef(0)
+  // deltaY > 0: swipe up / scroll down -> focus list. deltaY < 0: swipe down ->
+  // reveal Upcoming, but only once the list is at the top (intent is sure).
+  function applyGesture(deltaY: number, atTop: boolean) {
+    if (deltaY > 0) setUpcomingCollapsed(true)
+    else if (deltaY < 0 && atTop) setUpcomingCollapsed(false)
+  }
+  function onWheel(e: React.WheelEvent<HTMLDivElement>) {
+    if (Math.abs(e.deltaY) < 4) return
+    applyGesture(e.deltaY, e.currentTarget.scrollTop <= 0)
+  }
+  function onTouchStart(e: React.TouchEvent<HTMLDivElement>) {
+    touchY.current = e.touches[0].clientY
+  }
+  function onTouchMove(e: React.TouchEvent<HTMLDivElement>) {
+    const dy = touchY.current - e.touches[0].clientY
+    if (Math.abs(dy) < 8) return
+    applyGesture(dy, e.currentTarget.scrollTop <= 0)
+    touchY.current = e.touches[0].clientY
   }
 
   const displayCurrency = settings?.displayCurrency ?? "USD"
@@ -81,7 +96,12 @@ export default function Home() {
         </div>
         <IntervalFilter value={filters} onChange={setFilters} />
         <Card className="min-h-0 flex-1 overflow-hidden p-2">
-          <div className="no-scrollbar h-full overflow-y-auto" onScroll={onListScroll}>
+          <div
+            className="no-scrollbar h-full overflow-y-auto"
+            onWheel={onWheel}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+          >
             <TxList
               txs={inRange}
               loading={txs === undefined}
