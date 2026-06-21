@@ -4,6 +4,7 @@ import { CurrencySettings } from "@/components/settings/CurrencySettings"
 import { CategorySettings } from "@/components/settings/CategorySettings"
 import { AccountSettings } from "@/components/settings/AccountSettings"
 import { DataSettings } from "@/components/settings/DataSettings"
+import { AppSettings } from "@/components/settings/AppSettings"
 
 const GITHUB_URL = "https://github.com/c4205m/sipali"
 
@@ -17,6 +18,7 @@ export default function Settings() {
       <CategorySettings />
       <AccountSettings />
       <DataSettings />
+      <AppSettings />
 
       <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="block">
         <Card className="flex items-center gap-3 transition-colors hover:bg-surface-2">
