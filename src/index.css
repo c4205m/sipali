@@ -100,7 +100,12 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  /* Frosted glass panel: translucent fill + blur + hairline + depth. */
+}
+
+@layer components {
+  /* Frosted glass panel: translucent fill + blur + hairline + depth.
+     Lives in the components layer so utilities (border/ring/outline/shadow)
+     can override it on a per-element basis. */
   .glass {
     background-color: rgba(255, 255, 255, 0.045);
     backdrop-filter: blur(16px) saturate(140%);

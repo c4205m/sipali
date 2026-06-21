@@ -17,6 +17,7 @@ import { useCategories } from "@/hooks/useCategories"
 import { useSettings } from "@/hooks/useSettings"
 import { addTransaction, updateTransaction } from "@/lib/transactions"
 import { addRecurringTemplate } from "@/hooks/useRecurring"
+import { confirmRecurring } from "@/lib/recurring"
 import { addInstallmentPlan } from "@/hooks/useInstallments"
 import { currencyOptions } from "@/lib/currency-options"
 import { decodeOweCode } from "@/lib/split"
@@ -149,7 +150,7 @@ export function TxForm({
         })
         toast("Transaction updated", "success")
       } else if (recurring) {
-        await addRecurringTemplate({
+        const recId = await addRecurringTemplate({
           name: name.trim(),
           price: Number(price),
           currency,
@@ -161,6 +162,9 @@ export function TxForm({
           interval,
           anchorDate: date,
         })
+        // If the start date is today or earlier, log that first payment now;
+        // only future occurrences belong in Upcoming.
+        if (date <= todayISO()) await confirmRecurring(recId)
         toast("Recurring schedule added", "success")
       } else if (installment) {
         if (installmentTotal === "" || installmentTotal < 1)
