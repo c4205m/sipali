@@ -12,6 +12,7 @@ import {
   SwitchRow,
 } from "@/components/ui"
 import { useToast } from "@/components/ui/Toast"
+import { NameField } from "@/components/domain/NameField"
 import { useAccounts } from "@/hooks/useAccounts"
 import { useCategories } from "@/hooks/useCategories"
 import { useSettings } from "@/hooks/useSettings"
@@ -111,6 +112,15 @@ export function TxForm({
       setCode("")
       setShowCodeInput(false)
     }
+  }
+
+  function fillFromHistory(t: Transaction) {
+    setName(t.name)
+    setPrice(t.price)
+    setCurrency(t.currency)
+    if (t.categoryId) setCategoryId(t.categoryId)
+    if (t.importance) setImportance([t.importance])
+    if (t.account) setAccount(t.account)
   }
 
   const accountOptions = useMemo(
@@ -234,7 +244,7 @@ export function TxForm({
       />
 
       <Field label="Name">
-        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Coffee" />
+        <NameField value={name} onChange={setName} type={type} onPick={fillFromHistory} />
       </Field>
 
       <div className="grid grid-cols-2 gap-3">
