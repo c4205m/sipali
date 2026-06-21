@@ -4,12 +4,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@media (display-mode: standalone) {
+  main[class] {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 1.5rem);
+  }
+}
+
 @layer base {
   html {
     @apply text-fg;
     color-scheme: dark;
     background-color: #05070f;
     overscroll-behavior: none;
+  }
+  html::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top, 0px);
+    background: #05070f;
+    z-index: 9999;
+    pointer-events: none;
   }
   body {
     @apply font-sans antialiased;
