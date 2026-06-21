@@ -25,7 +25,7 @@ export function AccentPicker() {
   }
 
   return (
-    <div className="no-scrollbar flex gap-3 overflow-x-auto py-1">
+    <div className="no-scrollbar flex gap-3 overflow-x-auto px-1.5 py-1.5">
       {ACCENT_OPTIONS.map((o) => {
         const active = o.hex.toLowerCase() === current
         return (
