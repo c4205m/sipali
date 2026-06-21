@@ -4,7 +4,6 @@ import { todayISO } from "@/lib/dates"
 // Shape of an exported backup file.
 export interface BackupData {
   app: "sipali"
-  version: 1
   exportedAt: string
   transactions: unknown[]
   accounts: unknown[]
@@ -29,7 +28,6 @@ export async function exportData(): Promise<BackupData> {
     ])
   return {
     app: "sipali",
-    version: 1,
     exportedAt: new Date().toISOString(),
     transactions,
     accounts,
