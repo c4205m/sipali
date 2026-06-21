@@ -13,6 +13,7 @@
 @layer base {
   html {
     @apply text-fg;
+    --brand-rgb: 110 123 242;
     color-scheme: dark;
     background-color: #05070f;
     overscroll-behavior: none;
@@ -35,7 +36,7 @@
     overscroll-behavior: none;
     position: relative;
     background:
-      radial-gradient(1200px 800px at 20% -10%, rgba(110, 123, 242, 0.12), transparent 60%),
+      radial-gradient(1200px 800px at 20% -10%, rgb(var(--brand-rgb) / 0.12), transparent 60%),
       radial-gradient(1000px 700px at 100% 10%, rgba(59, 130, 246, 0.1), transparent 55%),
       linear-gradient(180deg, #0a0e1c 0%, #05070f 100%);
     background-attachment: fixed;
@@ -57,7 +58,7 @@
     height: 420px;
     top: -80px;
     left: -60px;
-    background: rgba(110, 123, 242, 0.18);
+    background: rgb(var(--brand-rgb) / 0.18);
   }
   body::after {
     width: 380px;

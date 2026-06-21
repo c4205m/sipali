@@ -142,6 +142,7 @@ export interface AppSettings {
   displayCurrency: string
   enabledCurrencies: string[]
   iosShortcutName?: string
+  accentColor?: string
   historyFields?: HistoryField[]
   // Show amounts converted to the display currency in transaction lists.
   convertOnList?: boolean
@@ -158,6 +159,21 @@ export interface RateHistoryRecord {
   date: string
   rates: Record<string, number>
 }
+
+export const DEFAULT_ACCENT = "#6e7bf2"
+
+export const ACCENT_OPTIONS: { label: string; hex: string }[] = [
+  { label: "Indigo", hex: "#6e7bf2" },
+  { label: "Blue", hex: "#3b82f6" },
+  { label: "Cyan", hex: "#06b6d4" },
+  { label: "Teal", hex: "#14b8a6" },
+  { label: "Emerald", hex: "#10b981" },
+  { label: "Violet", hex: "#8b5cf6" },
+  { label: "Pink", hex: "#ec4899" },
+  { label: "Rose", hex: "#f43f5e" },
+  { label: "Amber", hex: "#f59e0b" },
+  { label: "Orange", hex: "#f97316" },
+]
 
 export const DEFAULT_CURRENCIES = ["USD", "EUR", "TRY"]
 

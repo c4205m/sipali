@@ -13,6 +13,7 @@ import {
   ListItem,
 } from "@/components/ui"
 import { useToast } from "@/components/ui/Toast"
+import { AccentPicker } from "@/components/settings/AccentPicker"
 import { useSettings, saveSettings } from "@/hooks/useSettings"
 import { useRates, replaceRates } from "@/hooks/useRates"
 import { fetchLiveRates } from "@/lib/fx-fetch"
@@ -54,15 +55,19 @@ export function CurrencySettings() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Display currency</CardTitle>
+          <CardTitle>Display</CardTitle>
         </CardHeader>
-        <Field hint="Amounts across the app convert to this currency.">
+        <Field label="Currency" hint="Amounts across the app convert to this currency.">
           <Select
             value={settings.displayCurrency}
             onValueChange={(v) => saveSettings({ displayCurrency: v })}
             options={currencyOptions(enabled)}
           />
         </Field>
+        <div className="mt-3 flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-muted">Accent</span>
+          <AccentPicker />
+        </div>
       </Card>
 
       <CollapsibleCard

@@ -15,9 +15,8 @@ export default {
         border: "rgba(255,255,255,0.10)",
         muted: "#8b93a8",
         fg: "#eaf0ff",
-        // Indigo brand accent
         brand: {
-          DEFAULT: "#6e7bf2",
+          DEFAULT: "rgb(var(--brand-rgb) / <alpha-value>)",
           fg: "#05070f",
         },
       },
@@ -30,8 +29,8 @@ export default {
         mono: ["JetBrains Mono", "ui-monospace", "monospace"],
       },
       boxShadow: {
-        glow: "0 0 28px -4px rgba(110,123,242,0.45)",
-        "glow-sm": "0 0 16px -4px rgba(110,123,242,0.4)",
+        glow: "0 0 28px -4px rgb(var(--brand-rgb) / 0.45)",
+        "glow-sm": "0 0 16px -4px rgb(var(--brand-rgb) / 0.4)",
         glass: "0 8px 32px -8px rgba(0,0,0,0.6), inset 0 1px 0 0 rgba(255,255,255,0.06)",
       },
       backdropBlur: {
