@@ -5,8 +5,10 @@ import { VitePWA } from "vite-plugin-pwa"
 import basicSsl from "@vitejs/plugin-basic-ssl"
 import { fileURLToPath, URL } from "node:url"
 
+const BASE = "/sipali/"
+
 export default defineConfig({
-  base: "/sipali/",
+  base: BASE,
   server: { host: true },
   preview: { host: true },
   plugins: [
@@ -15,6 +17,7 @@ export default defineConfig({
     basicSsl(),
     VitePWA({
       registerType: "autoUpdate",
+      devOptions: { enabled: true },
       includeAssets: ["favicon.svg", "favicon.ico", "favicon-96x96.png", "apple-touch-icon.png"],
       manifest: {
         name: "sipali — finance tracker",
@@ -24,9 +27,11 @@ export default defineConfig({
         background_color: "#05070f",
         display: "standalone",
         orientation: "portrait",
-        id: "/sipali/",
-        start_url: "/sipali/",
-        scope: "/sipali/",
+        lang: "en",
+        categories: ["finance", "productivity", "utilities"],
+        id: BASE,
+        start_url: BASE,
+        scope: BASE,
         icons: [
           { src: "web-app-manifest-192x192.png", sizes: "192x192", type: "image/png" },
           { src: "web-app-manifest-512x512.png", sizes: "512x512", type: "image/png" },
@@ -41,6 +46,22 @@ export default defineConfig({
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
+          },
+        ],
+        screenshots: [
+          {
+            src: "screenshot-narrow.png",
+            sizes: "1080x1920",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "sipali finance tracker on mobile",
+          },
+          {
+            src: "screenshot-wide.png",
+            sizes: "1920x1080",
+            type: "image/png",
+            form_factor: "wide",
+            label: "sipali finance tracker on desktop",
           },
         ],
       },
