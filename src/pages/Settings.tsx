@@ -4,6 +4,7 @@ import { CurrencySettings } from "@/components/settings/CurrencySettings"
 import { CategorySettings } from "@/components/settings/CategorySettings"
 import { AccountSettings } from "@/components/settings/AccountSettings"
 import { DataSettings } from "@/components/settings/DataSettings"
+import { ShortcutSettings } from "@/components/settings/ShortcutSettings"
 import { AppSettings } from "@/components/settings/AppSettings"
 
 const GITHUB_URL = "https://github.com/c4205m/sipali"
@@ -18,6 +19,7 @@ export default function Settings() {
       <CategorySettings />
       <AccountSettings />
       <DataSettings />
+      <ShortcutSettings />
       <AppSettings />
 
       <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="block">
