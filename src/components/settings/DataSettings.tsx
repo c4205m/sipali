@@ -50,7 +50,7 @@ export function DataSettings() {
           <Upload size={16} /> Import
         </Button>
         <Button variant="danger" size="sm" className="flex-1" onClick={() => setConfirmClear(true)}>
-          <Trash2 size={16} /> Clear all
+          <Trash2 size={16} /> Clear
         </Button>
         <input
           ref={fileRef}
