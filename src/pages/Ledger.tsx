@@ -4,7 +4,6 @@ import { SlidersHorizontal, Search, Split } from "lucide-react"
 import { Card, Input, Button, Badge } from "@/components/ui"
 import { TxList } from "@/components/domain/TxList"
 import { AdvancedFilters } from "@/components/domain/AdvancedFilters"
-import { AddTransactionFab } from "@/components/domain/AddTransaction"
 import { SplitModal } from "@/components/domain/SplitModal"
 import { useTransactions } from "@/hooks/useTransactions"
 import { applyTxFilters, emptyTxFilters } from "@/lib/filter"
@@ -72,7 +71,6 @@ export default function Ledger() {
         onChange={setFilters}
       />
       <SplitModal open={splitOpen} onOpenChange={setSplitOpen} />
-      <AddTransactionFab />
     </div>
   )
 }

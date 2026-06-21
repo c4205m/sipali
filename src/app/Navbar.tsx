@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom"
 import { Home, ListOrdered, BarChart3, Settings } from "lucide-react"
 import { cn } from "@/lib/cn"
+import { AddTransactionCenterButton } from "@/components/domain/AddTransaction"
 
 const ITEMS = [
   { to: "/", label: "Home", icon: Home, end: true },
@@ -9,8 +10,16 @@ const ITEMS = [
   { to: "/settings", label: "Settings", icon: Settings },
 ]
 
-// Top bar on desktop, bottom tab bar on mobile.
+const cradle = {
+  WebkitMaskImage: "radial-gradient(circle 36px at 50% -4px, transparent 0 35px, #000 41px)",
+  maskImage: "radial-gradient(circle 36px at 50% -4px, transparent 0 35px, #000 41px)",
+  filter: "drop-shadow(0 -0.5px 0 rgba(255,255,255,0.12))",
+}
+
+// Top bar on desktop, bottom cradle bar on mobile.
 export function Navbar() {
+  const left = ITEMS.slice(0, 2)
+  const right = ITEMS.slice(2)
   return (
     <>
       {/* Desktop / tablet */}
@@ -22,27 +31,51 @@ export function Navbar() {
           ))}
         </nav>
       </header>
+      <AddTransactionCenterButton className="fixed bottom-6 right-4 z-40 hidden md:flex" />
 
-      {/* Mobile bottom bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-border bg-bg/90 backdrop-blur md:hidden">
-        {ITEMS.map((it) => (
-          <NavLink
-            key={it.to}
-            to={it.to}
-            end={it.end}
-            className={({ isActive }) =>
-              cn(
-                "flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px]",
-                isActive ? "text-brand" : "text-muted",
-              )
-            }
-          >
-            <it.icon size={20} />
-            {it.label}
-          </NavLink>
-        ))}
+      {/* Mobile bottom cradle bar */}
+      <nav className="fixed inset-x-0 bottom-0 z-30 h-16 md:hidden">
+        <div className="absolute inset-0 bg-surface backdrop-blur" style={cradle} />
+        <div className="relative flex h-full">
+          {left.map((it) => (
+            <MobileItem key={it.to} {...it} />
+          ))}
+          <div className="w-16 shrink-0" />
+          {right.map((it) => (
+            <MobileItem key={it.to} {...it} />
+          ))}
+        </div>
+        <AddTransactionCenterButton className="absolute left-1/2 top-0 z-40 -translate-x-1/2 -translate-y-1/2" />
       </nav>
     </>
+  )
+}
+
+function MobileItem({
+  to,
+  label,
+  icon: Icon,
+  end,
+}: {
+  to: string
+  label: string
+  icon: typeof Home
+  end?: boolean
+}) {
+  return (
+    <NavLink
+      to={to}
+      end={end}
+      className={({ isActive }) =>
+        cn(
+          "flex flex-1 flex-col items-center justify-center gap-0.5 text-[11px]",
+          isActive ? "text-brand" : "text-muted",
+        )
+      }
+    >
+      <Icon size={20} />
+      {label}
+    </NavLink>
   )
 }
 
@@ -56,7 +89,6 @@ function NavItem({
   label: string
   icon: typeof Home
   end?: boolean
-  dev?: boolean
 }) {
   return (
     <NavLink

@@ -2,16 +2,21 @@ import { useState } from "react"
 import { Plus } from "lucide-react"
 import { Drawer, Button } from "@/components/ui"
 import { TxForm } from "@/components/domain/TxForm"
+import { cn } from "@/lib/cn"
 
-// Floating action button that opens the new-transaction drawer.
-export function AddTransactionFab() {
+// Round brand button + new-transaction drawer. Caller positions it via className
+// (corner FAB on desktop, cradle-buried center button in the mobile navbar).
+export function AddTransactionCenterButton({ className }: { className?: string }) {
   const [open, setOpen] = useState(false)
   return (
     <>
       <button
         onClick={() => setOpen(true)}
         aria-label="Add transaction"
-        className="fixed bottom-20 right-4 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-brand text-brand-fg shadow-glow transition-transform hover:scale-105 active:scale-95 md:bottom-6"
+        className={cn(
+          "flex h-14 w-14 items-center justify-center rounded-full bg-brand text-brand-fg shadow-glow transition-transform hover:scale-105 active:translate-y-0.5 active:scale-90",
+          className,
+        )}
       >
         <Plus size={24} />
       </button>

@@ -5,7 +5,6 @@ import { StatCards } from "@/components/domain/StatCards"
 import { UpcomingScroller } from "@/components/domain/UpcomingScroller"
 import { IntervalFilter } from "@/components/domain/IntervalFilter"
 import { TxList } from "@/components/domain/TxList"
-import { AddTransactionFab } from "@/components/domain/AddTransaction"
 import { useTransactions } from "@/hooks/useTransactions"
 import { useSettings } from "@/hooks/useSettings"
 import { useRates } from "@/hooks/useRates"
@@ -112,8 +111,6 @@ export default function Home() {
           </div>
         </Card>
       </section>
-
-      <AddTransactionFab />
     </div>
   )
 }
