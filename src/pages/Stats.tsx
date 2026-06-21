@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
+import { usePersistentState } from "@/hooks/usePersistentState"
 import { IntervalFilter } from "@/components/domain/IntervalFilter"
 import {
   ChartCard,
@@ -26,7 +27,7 @@ export default function Stats() {
   const catMap = useCategoryMap()
   const settings = useSettings()
   const rates = useRates()
-  const [filters, setFilters] = useState<HomeFilters>({
+  const [filters, setFilters] = usePersistentState<HomeFilters>("stats.filters", {
     interval: "year",
     customFrom: todayISO(),
     customTo: todayISO(),

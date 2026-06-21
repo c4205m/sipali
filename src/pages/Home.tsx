@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from "react"
+import { useMemo, useRef } from "react"
+import { usePersistentState } from "@/hooks/usePersistentState"
 import { Card } from "@/components/ui"
 import { StatCards } from "@/components/domain/StatCards"
 import { UpcomingScroller } from "@/components/domain/UpcomingScroller"
@@ -23,12 +24,12 @@ export default function Home() {
   const txs = useTransactions()
   const settings = useSettings()
   const rates = useRates()
-  const [filters, setFilters] = useState<HomeFilters>({
+  const [filters, setFilters] = usePersistentState<HomeFilters>("home.filters", {
     interval: "month",
     customFrom: todayISO(),
     customTo: todayISO(),
   })
-  const [upcomingCollapsed, setUpcomingCollapsed] = useState(false)
+  const [upcomingCollapsed, setUpcomingCollapsed] = usePersistentState("home.upcomingCollapsed", false)
   const touchY = useRef(0)
   // deltaY > 0: swipe up / scroll down -> focus list. deltaY < 0: swipe down ->
   // reveal Upcoming, but only once the list is at the top (intent is sure).

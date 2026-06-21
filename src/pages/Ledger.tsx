@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import { usePersistentState } from "@/hooks/usePersistentState"
 import { SlidersHorizontal, Search, Split } from "lucide-react"
 import { Card, Input, Button, Badge } from "@/components/ui"
 import { TxList } from "@/components/domain/TxList"
@@ -12,7 +13,7 @@ import type { TxFilters } from "@/types"
 
 export default function Ledger() {
   const txs = useTransactions()
-  const [filters, setFilters] = useState<TxFilters>(emptyTxFilters)
+  const [filters, setFilters] = usePersistentState<TxFilters>("ledger.filters", emptyTxFilters)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
 
