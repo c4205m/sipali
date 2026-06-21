@@ -6,6 +6,8 @@ import {
   Card,
   CardHeader,
   CardTitle,
+  Accordion,
+  CollapsibleCard,
   Badge,
   Chip,
   ChipGroup,
@@ -63,6 +65,7 @@ export default function Design() {
       <Overlays />
       <ListsAndAmounts />
       <SwipeDemo />
+      <AccordionDemo />
       <Skeletons />
       <TypeReference />
     </div>
@@ -455,6 +458,28 @@ function SwipeDemo() {
           </SwipeRow>
         ))}
       </SwipeList>
+    </Section>
+  )
+}
+
+function AccordionDemo() {
+  return (
+    <Section title="Accordion — single-open collapsible cards">
+      <p className="text-xs text-muted">
+        Only one card open at a time. Optional action slot sits beside the toggle.
+      </p>
+      <Accordion defaultOpenId="acc-1">
+        <CollapsibleCard id="acc-1" title="First section">
+          <p className="text-sm text-muted">Body of the first section.</p>
+        </CollapsibleCard>
+        <CollapsibleCard
+          id="acc-2"
+          title="With action"
+          action={<Button size="sm">Action</Button>}
+        >
+          <p className="text-sm text-muted">Body of the second section.</p>
+        </CollapsibleCard>
+      </Accordion>
     </Section>
   )
 }

@@ -1,5 +1,5 @@
 import { ExternalLink } from "lucide-react"
-import { Card } from "@/components/ui"
+import { Card, Accordion } from "@/components/ui"
 import { CurrencySettings } from "@/components/settings/CurrencySettings"
 import { CategorySettings } from "@/components/settings/CategorySettings"
 import { AccountSettings } from "@/components/settings/AccountSettings"
@@ -15,12 +15,14 @@ export default function Settings() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
 
-      <CurrencySettings />
-      <CategorySettings />
-      <AccountSettings />
-      <DataSettings />
-      <ShortcutSettings />
-      <AppSettings />
+      <Accordion>
+        <CurrencySettings />
+        <CategorySettings />
+        <AccountSettings />
+        <DataSettings />
+        <ShortcutSettings />
+        <AppSettings />
+      </Accordion>
 
       <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="block">
         <Card className="flex items-center gap-3 transition-colors hover:bg-surface-2">

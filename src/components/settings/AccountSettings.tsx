@@ -1,9 +1,7 @@
 import { useMemo, useState } from "react"
 import { Plus, Star, Archive, ArchiveRestore } from "lucide-react"
 import {
-  Card,
-  CardHeader,
-  CardTitle,
+  CollapsibleCard,
   Button,
   IconButton,
   Input,
@@ -51,11 +49,7 @@ export function AccountSettings() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Accounts</CardTitle>
-      </CardHeader>
-
+    <CollapsibleCard id="accounts" title="Accounts">
       <div className="mb-3 flex gap-2">
         <Input
           value={name}
@@ -110,6 +104,6 @@ export function AccountSettings() {
           />
         ))}
       </div>
-    </Card>
+    </CollapsibleCard>
   )
 }

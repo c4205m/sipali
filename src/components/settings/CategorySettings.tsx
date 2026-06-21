@@ -1,9 +1,7 @@
 import { useState } from "react"
 import { Plus, Pencil, Trash2 } from "lucide-react"
 import {
-  Card,
-  CardHeader,
-  CardTitle,
+  CollapsibleCard,
   Button,
   IconButton,
   Drawer,
@@ -33,14 +31,15 @@ export function CategorySettings() {
   const [creating, setCreating] = useState(false)
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Categories</CardTitle>
+    <CollapsibleCard
+      id="categories"
+      title="Categories"
+      action={
         <Button size="sm" onClick={() => setCreating(true)}>
           <Plus size={14} /> Add
         </Button>
-      </CardHeader>
-
+      }
+    >
       <CategoryGroup
         label="Expense"
         items={categories.filter((c) => c.categoryType !== "income")}
@@ -61,7 +60,7 @@ export function CategorySettings() {
         existing={editing ?? undefined}
         onClose={() => setEditing(null)}
       />
-    </Card>
+    </CollapsibleCard>
   )
 }
 

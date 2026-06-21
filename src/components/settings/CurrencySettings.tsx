@@ -4,6 +4,7 @@ import {
   Card,
   CardHeader,
   CardTitle,
+  CollapsibleCard,
   Field,
   Select,
   Button,
@@ -50,7 +51,7 @@ export function CurrencySettings() {
   }
 
   return (
-    <div className="space-y-4">
+    <>
       <Card>
         <CardHeader>
           <CardTitle>Display currency</CardTitle>
@@ -64,18 +65,15 @@ export function CurrencySettings() {
         </Field>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Exchange rates (per 1 {settings.displayCurrency})</CardTitle>
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={() => setPickerOpen(true)}>
-              <Plus size={14} /> Currencies
-            </Button>
-            <Button size="sm" loading={fetching} onClick={fetchRates}>
-              <RefreshCw size={14} /> Fetch
-            </Button>
-          </div>
-        </CardHeader>
+      <CollapsibleCard
+        id="exchange-rates"
+        title="Rates"
+        action={
+          <Button size="sm" loading={fetching} onClick={fetchRates}>
+            <RefreshCw size={14} /> Fetch
+          </Button>
+        }
+      >
         <p className="mb-2 text-xs text-muted">
           Rates fetched live. Updated {rates.updatedAt}. Gram gold (GXAU) derived from ounce gold.
         </p>
@@ -98,7 +96,16 @@ export function CurrencySettings() {
             )
           })}
         </div>
-      </Card>
+        <Button
+          size="sm"
+          variant="outline"
+          fullWidth
+          className="mt-3"
+          onClick={() => setPickerOpen(true)}
+        >
+          <Plus size={14} /> Currencies
+        </Button>
+      </CollapsibleCard>
 
       <CurrencyPicker
         open={pickerOpen}
@@ -107,7 +114,7 @@ export function CurrencySettings() {
         pinned={[settings.displayCurrency]}
         onChange={setEnabled}
       />
-    </div>
+    </>
   )
 }
 
