@@ -56,7 +56,9 @@ export function TxList({
   const [splitting, setSplitting] = useState<Transaction | null>(null)
 
   if (txs.length === 0) {
-    return <EmptyState title={emptyTitle} description={emptyDescription} />
+    return (
+      <EmptyState title={emptyTitle} description={emptyDescription} className="h-full border-0" />
+    )
   }
 
   function openEdit(tx: Transaction) {
