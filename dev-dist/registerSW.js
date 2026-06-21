@@ -1,1 +1,0 @@
-if('serviceWorker' in navigator) navigator.serviceWorker.register('/sipali/dev-sw.js?dev-sw', { scope: '/sipali/', type: 'classic' })
