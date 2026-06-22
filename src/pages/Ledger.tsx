@@ -23,7 +23,7 @@ export default function Ledger() {
   const count = activeFilterCount(filters)
 
   return (
-    <div className="flex h-[calc(100dvh-7rem)] flex-col gap-4 md:h-[calc(100dvh-6.5rem)]">
+    <div className="flex h-full flex-col gap-4">
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Ledger</h1>
         <div className="flex items-center gap-3">

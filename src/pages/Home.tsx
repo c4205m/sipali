@@ -68,7 +68,7 @@ export default function Home() {
   )
 
   return (
-    <div className="flex h-[calc(100dvh-7rem)] flex-col gap-6 md:h-[calc(100dvh-6.5rem)]">
+    <div className="flex h-full flex-col gap-6">
       <header>
         <p className="text-sm text-muted">{greeting()}</p>
         <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
